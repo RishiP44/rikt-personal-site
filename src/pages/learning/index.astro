@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EntryList from "../../components/EntryList.astro";
+import { getPublished } from "../../lib/content";
+const entries = await getPublished("learning");
+const subjects = [...new Set(entries.map(({ data }) => data.subject))].sort();
+---
+
+<BaseLayout
+  title="Learning"
+  description="Published learning records, organized by subject and date."
+  noindex={entries.length === 0}
+>
+  <h1>Learning</h1>
+  {entries.length === 0 && (
+    <p>No learning records have been published yet. Good things take time.</p>
+  )}
+  <section aria-labelledby="by-subject">
+    <h2 id="by-subject">By subject</h2>
+    {subjects.length ? (
+      subjects.map((subject) => (
+        <section>
+          <h3>{subject}</h3>
+          <EntryList
+            archive="learning"
+            entries={entries.filter(({ data }) => data.subject === subject)}
+          />
+        </section>
+      ))
+    ) : (
+      <p>Subject groups will appear when records are published.</p>
+    )}
+  </section>
+  <section aria-labelledby="chronological">
+    <h2 id="chronological">Chronological</h2>
+    {entries.length ? (
+      <EntryList archive="learning" entries={entries} />
+    ) : (
+      <p>Dated records will appear here, newest first.</p>
+    )}
+  </section>
+</BaseLayout>

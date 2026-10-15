@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EntryList from "../../components/EntryList.astro";
+import { getPublished } from "../../lib/content";
+const entries = await getPublished("writing");
+---
+
+<BaseLayout
+  title="Writing"
+  description="Published writing from Rishi Patel, newest first."
+  noindex={entries.length === 0}
+>
+  <h1>Writing</h1>
+  {entries.length ? (
+    <EntryList archive="writing" entries={entries} />
+  ) : (
+    <p>No articles have been published yet. Good things take time.</p>
+  )}
+</BaseLayout>

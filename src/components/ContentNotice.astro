@@ -1,0 +1,16 @@
+---
+import type { ContentStatus } from "../lib/content";
+interface Props {
+  status: ContentStatus;
+}
+const { status } = Astro.props;
+---
+
+{status !== "published" && (
+  <p class="content-notice" data-content-notice>
+    <strong>{status === "draft" ? "DRAFT" : "PLACEHOLDER"}</strong>
+    {status === "draft"
+      ? " — Preview only. This is not a published article or record."
+      : " — This page is still taking shape."}
+  </p>
+)}

@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { navigation } from "../lib/navigation";
+---
+
+<BaseLayout
+  title="Rishi Patel"
+  description="RIKT, Rishi Patel’s evolving archive of work, projects, learning, and writing."
+>
+  <h1>Rishi Patel</h1>
+  <p>RIKT means the void.</p>
+  <p>
+    An evolving archive of work, projects, learning, writing, and personal
+    identity.
+  </p>
+  <nav aria-label="Site index">
+    <ul class="home-index">
+      {navigation.map(({ href, label }) => (
+        <li>
+          <a href={href}>{label}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</BaseLayout>

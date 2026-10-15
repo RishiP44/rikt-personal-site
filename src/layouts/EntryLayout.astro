@@ -1,0 +1,35 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import ContentNotice from "../components/ContentNotice.astro";
+import { formatDate, type Archive, type ContentStatus } from "../lib/content";
+
+interface Props {
+  title: string;
+  description: string;
+  status: ContentStatus;
+  archive: Archive;
+  publishedDate?: string;
+}
+const { title, description, status, archive, publishedDate } = Astro.props;
+const archiveTitle = archive.charAt(0).toUpperCase() + archive.slice(1);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  noindex={status !== "published"}
+>
+  <article data-content-status={status} data-archive={archive}>
+    <h1>{title}</h1>
+    <ContentNotice status={status} />
+    {status === "published" && publishedDate && (
+      <p>
+        <time datetime={publishedDate}>{formatDate(publishedDate)}</time>
+      </p>
+    )}
+    <slot />
+  </article>
+  <p>
+    <a href={`/${archive}/`}>Back to {archiveTitle}</a>
+  </p>
+</BaseLayout>

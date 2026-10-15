@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EntryList from "../../components/EntryList.astro";
+import { getPublished } from "../../lib/content";
+const entries = await getPublished("projects");
+---
+
+<BaseLayout
+  title="Projects"
+  description="Published projects from Rishi Patel’s archive."
+  noindex={entries.length === 0}
+>
+  <h1>Projects</h1>
+  {entries.length ? (
+    <EntryList archive="projects" entries={entries} />
+  ) : (
+    <p>No projects have been published yet. Good things take time.</p>
+  )}
+</BaseLayout>

@@ -1,0 +1,16 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContentNotice from "../components/ContentNotice.astro";
+import { Content, frontmatter } from "../content/about.md";
+const status = frontmatter.status === "published" ? "published" : "placeholder";
+---
+
+<BaseLayout
+  title="About"
+  description={frontmatter.description}
+  noindex={status !== "published"}
+>
+  <h1>About</h1>
+  <ContentNotice status={status} />
+  <Content />
+</BaseLayout>

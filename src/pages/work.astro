@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContentNotice from "../components/ContentNotice.astro";
+---
+
+<BaseLayout
+  title="Work"
+  description="Professional experience, skills, education, and resume. Content is being prepared."
+  noindex
+>
+  <h1>Work</h1>
+  <ContentNotice status="placeholder" />
+  <section aria-labelledby="experience">
+    <h2 id="experience">Professional experience</h2>
+    <p>Approved experience details will appear here.</p>
+  </section>
+  <section aria-labelledby="skills">
+    <h2 id="skills">Skills</h2>
+    <p>Confirmed skills will appear here.</p>
+  </section>
+  <section aria-labelledby="education">
+    <h2 id="education">Education</h2>
+    <p>Approved education details will appear here.</p>
+  </section>
+  <section aria-labelledby="resume">
+    <h2 id="resume">Resume</h2>
+    <p>A resume link will be added when the document is supplied.</p>
+  </section>
+</BaseLayout>

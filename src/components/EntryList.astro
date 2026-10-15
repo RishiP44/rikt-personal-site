@@ -1,0 +1,29 @@
+---
+import { formatDate, type Archive } from "../lib/content";
+interface Props {
+  archive: Archive;
+  entries: {
+    data: {
+      slug: string;
+      title: string;
+      description: string;
+      publishedDate?: string;
+    };
+  }[];
+}
+const { archive, entries } = Astro.props;
+---
+
+<ul class="entry-list">
+  {entries.map(({ data }) => (
+    <li>
+      <a href={`/${archive}/${data.slug}/`}>{data.title}</a>
+      {data.publishedDate && (
+        <time datetime={data.publishedDate}>
+          {formatDate(data.publishedDate)}
+        </time>
+      )}
+      <p>{data.description}</p>
+    </li>
+  ))}
+</ul>
