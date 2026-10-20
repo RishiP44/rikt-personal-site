@@ -1,10 +1,11 @@
 ---
 title: "ACME Medical"
 slug: "acme-medical"
-description: "Project details are being prepared."
-status: placeholder
+description: "A medical-record application built around REST APIs, persistence, access control, and automated API testing."
+status: published
+subtitle: "Enterprise application project"
+tags: ["JAVA", "JAKARTA EE", "MYSQL", "JUNIT"]
+order: 2
 ---
 
-Good things take time.
-
-Approved project details will appear here.
+A medical-record application built around REST APIs, persistence, access control, and automated API testing.

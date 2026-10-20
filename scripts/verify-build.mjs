@@ -53,6 +53,34 @@ const noindex = (html) =>
 
 export async function verifyBuild() {
   for (const route of planned) await stat(routeFile(route));
+  const home = await readFile(routeFile("/"), "utf8");
+  assert.match(home, /id="drawing"/);
+  assert.match(home, /id="about"/);
+  const machineLinks = [
+    ...home.matchAll(/<a class="part" href="([^"]+)" aria-label="([^"]+)"/g),
+  ];
+  assert.deepEqual(
+    machineLinks.map((match) => match[1]).sort(),
+    [
+      "#about",
+      "/work/",
+      "/projects/",
+      "/learning/",
+      "/writing/",
+      "/contact/",
+    ].sort(),
+    "Six ordinary machine links must work without JavaScript",
+  );
+  assert.equal(new Set(machineLinks.map((match) => match[2])).size, 6);
+  for (const font of ["editorial.woff", "editorial-italic.woff"]) {
+    const data = await readFile(path.join(dist, "assets", font));
+    assert.equal(
+      data.subarray(0, 4).toString(),
+      "wOFF",
+      `${font}: valid bundled font header`,
+    );
+  }
+  await stat(path.join(dist, "assets", "FONT-LICENSE.txt"));
   const files = (await walk(dist)).filter((file) => file.endsWith(".html"));
   const pages = new Map(
     await Promise.all(
@@ -92,11 +120,17 @@ export async function verifyBuild() {
     );
     assert.match(html, /<main id="main" tabindex="-1"/);
     assert.match(html, /href="#main"/);
-    assert.doesNotMatch(
-      html,
-      /<script\b/,
-      `${route}: static site should not ship scripts`,
+    const scripts = [
+      ...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g),
+    ];
+    assert.equal(
+      scripts.length,
+      2,
+      `${route}: only the theme bootstrap and progressive enhancement script`,
     );
+    assert.match(scripts[0][2], /localStorage\.getItem\("rikt-theme"\)/);
+    assert.match(scripts[1][1], /src="\/scripts\/site\.js"/);
+    assert.match(html, /class="theme-switch"[^>]*hidden/);
     assert.doesNotMatch(
       html,
       /href="(?:#|)"/,
@@ -163,7 +197,10 @@ export async function verifyBuild() {
       (name) => ({ href: `/${name}/` }),
     )) {
       assert(
-        html.includes(`href="${href}"`),
+        html.includes(`href="${href}"`) ||
+          (route === "/" &&
+            href === "/about/" &&
+            html.includes('href="#about"')),
         `${route}: missing navigation ${href}`,
       );
     }
@@ -182,11 +219,14 @@ export async function verifyBuild() {
         /No (?:projects|learning records|articles) have been published yet/,
       );
   }
-  for (const route of ["/work/", "/contact/"])
-    assert(
-      noindex(pages.get(routeFile(route))),
-      `${route}: placeholder must be noindex`,
-    );
+  assert(
+    !noindex(pages.get(routeFile("/work/"))),
+    "Approved Work content should be indexable",
+  );
+  assert(
+    noindex(pages.get(routeFile("/contact/"))),
+    "Contact email is still being prepared",
+  );
   const aboutSource = await readFile(
     path.join(root, "src/content/about.md"),
     "utf8",

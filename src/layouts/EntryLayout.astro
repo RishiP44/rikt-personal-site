@@ -19,7 +19,7 @@ const archiveTitle = archive.charAt(0).toUpperCase() + archive.slice(1);
   description={description}
   noindex={status !== "published"}
 >
-  <article data-content-status={status} data-archive={archive}>
+  <article class="prose" data-content-status={status} data-archive={archive}>
     <h1>{title}</h1>
     <ContentNotice status={status} />
     {status === "published" && publishedDate && (

@@ -6,14 +6,22 @@ const entries = await getPublished("projects");
 ---
 
 <BaseLayout
-  title="Projects"
-  description="Published projects from Rishi Patel’s archive."
+  title="Things taking shape."
+  description="A selection of systems, experiments, and questions made tangible."
   noindex={entries.length === 0}
 >
-  <h1>Projects</h1>
+  <div class="page-heading">
+    <div class="eyebrow">03 / CONSTRUCTION ASSEMBLY</div>
+    <h1>Things taking shape.</h1>
+    <p class="summary">
+      A selection of systems, experiments, and questions made tangible.
+    </p>
+  </div>
   {entries.length ? (
     <EntryList archive="projects" entries={entries} />
   ) : (
-    <p>No projects have been published yet. Good things take time.</p>
+    <p class="placeholder-note">
+      No projects have been published yet. Good things take time.
+    </p>
   )}
 </BaseLayout>

@@ -25,14 +25,14 @@ scripts/
 
 | Route                                           | Initial content / visibility                                               |
 | ----------------------------------------------- | -------------------------------------------------------------------------- |
-| `/`                                             | Rishi Patel, RIKT identity, introduction, vertical navigation; indexable   |
-| `/about/`                                       | Replaceable biography placeholder; noindex                                 |
-| `/work/`                                        | Experience, skills, education, resume placeholders; noindex                |
-| `/projects/`                                    | Published entries only; empty and noindex initially                        |
-| `/projects/rikt-kernel/`                        | Placeholder; noindex                                                       |
-| `/projects/procuretrack/`                       | Placeholder; noindex                                                       |
-| `/projects/acme-medical/`                       | Placeholder; noindex                                                       |
-| `/projects/autosales-ai-analytics/`             | Placeholder; noindex                                                       |
+| `/`                                             | Drawing board, six linked assemblies, homepage About; indexable            |
+| `/about/`                                       | Shared published Markdown biography; indexable                             |
+| `/work/`                                        | Accepted experience summaries; indexable                                   |
+| `/projects/`                                    | Published entries only; four approved summaries                            |
+| `/projects/rikt-kernel/`                        | Published summary; indexable                                               |
+| `/projects/procuretrack/`                       | Published summary; indexable                                               |
+| `/projects/acme-medical/`                       | Published summary; indexable                                               |
+| `/projects/autosales-ai-analytics/`             | Published summary; indexable                                               |
 | `/projects/financial-stock-planner/`            | Placeholder; noindex                                                       |
 | `/projects/alea/`                               | Placeholder; noindex                                                       |
 | `/projects/atlas-stock-analyzer/`               | Placeholder; noindex                                                       |
@@ -45,7 +45,7 @@ scripts/
 | `/learning/independent-study/`                  | Placeholder; noindex                                                       |
 | `/writing/`                                     | Published articles, newest first; empty and noindex initially              |
 | `/writing/sample-draft/`                        | Labelled SAMPLE / DRAFT preview; noindex; absent from indexes              |
-| `/contact/`                                     | Email, GitHub, LinkedIn text placeholders; noindex                         |
+| `/contact/`                                     | Confirmed GitHub and forthcoming email; noindex                            |
 | `/404.html`                                     | Missing page response; noindex                                             |
 | `/robots.txt`                                   | Allows crawling so noindex can be read; sitemap URL when origin configured |
 | `/sitemap.xml`                                  | Indexable URLs only; empty without configured production origin            |
@@ -56,9 +56,11 @@ Astro generates directory-style routes. Local routing accepts both slashless and
 
 `status` is required and is one of `placeholder`, `draft`, or `published`. Required `slug` is the stable URL key; filename changes do not change the URL. Duplicate slugs fail the build. Writing and learning require a valid `publishedDate` only when published; learning also requires `subject`. No dates or biographical claims are fabricated for placeholders.
 
+The homepage now uses the accepted drawing-board design with `#drawing` and `#about` sections. The six machine destinations are ordinary SVG anchors. `/about/` remains available, and every existing slug is retained. Four project summaries are published; learning has approved overview text plus the existing unpublished record routes.
+
 Every entry receives a route, including drafts and placeholders. Only published entries are returned to public indexes. All non-published entries show notices, receive `noindex, follow`, and are excluded from the sitemap. This allows direct preview without adding sample content to public listings. These routes are not private.
 
-About is a standalone Markdown document with `status` and `description` frontmatter. Only `status: published` removes its placeholder state. Work and Contact remain simple editable Astro pages until approved content is available.
+About is a Markdown document with `status`, `description` and `lede` frontmatter, shared by the homepage and standalone route. Only `status: published` removes its placeholder state. Work and Contact remain simple editable Astro pages.
 
 ## Deployment boundary
 

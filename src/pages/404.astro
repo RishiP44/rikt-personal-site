@@ -3,12 +3,22 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout
-  title="Page not found"
+  title="An unfinished coordinate."
   description="This page could not be found."
   noindex
 >
-  <h1>Page not found</h1>
+  <div class="page-heading">
+    <div class="eyebrow">404 / OUTSIDE THE DRAWING</div>
+    <h1>
+      An unfinished
+      <br />
+      <em>coordinate.</em>
+    </h1>
+    <p class="summary">There is no page here yet.</p>
+  </div>
   <p>
-    <a href="/">Return to RIKT</a>.
+    <a class="mono" href="/">
+      ← RETURN TO THE DRAWING
+    </a>
   </p>
 </BaseLayout>

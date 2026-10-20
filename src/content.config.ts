@@ -20,7 +20,12 @@ const date = z
     );
   }, "Use a real calendar date in YYYY-MM-DD format.");
 
-const projectSchema = z.object(fields);
+const projectSchema = z.object({
+  ...fields,
+  subtitle: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  order: z.number().int().positive().optional(),
+});
 const datedSchema = z
   .object({ ...fields, publishedDate: date.optional() })
   .refine(

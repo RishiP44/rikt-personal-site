@@ -25,6 +25,10 @@ export async function getPublished<T extends Archive>(collection: T) {
       const bDate =
         "publishedDate" in b.data ? (b.data.publishedDate ?? "") : "";
       return (
+        (("order" in a.data ? a.data.order : undefined) ??
+          Number.MAX_SAFE_INTEGER) -
+          (("order" in b.data ? b.data.order : undefined) ??
+            Number.MAX_SAFE_INTEGER) ||
         bDate.localeCompare(aDate) ||
         a.data.title.localeCompare(b.data.title, "en")
       );

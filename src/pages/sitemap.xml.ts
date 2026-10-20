@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { getPublished } from "../lib/content";
 
 export const GET: APIRoute = async ({ site }) => {
-  const paths = ["/"];
+  const paths = ["/", "/work/"];
   for (const collection of ["projects", "learning", "writing"] as const) {
     const entries = await getPublished(collection);
     if (entries.length) paths.push(`/${collection}/`);

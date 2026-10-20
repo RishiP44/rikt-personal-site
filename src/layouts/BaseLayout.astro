@@ -1,13 +1,15 @@
 ---
+import SiteHeader from "../components/SiteHeader.astro";
+import ThemeSwitch from "../components/ThemeSwitch.astro";
 import { navigation } from "../lib/navigation";
 import "../styles/global.css";
-
 interface Props {
   title: string;
   description: string;
   noindex?: boolean;
+  home?: boolean;
 }
-const { title, description, noindex = false } = Astro.props;
+const { title, description, noindex = false, home = false } = Astro.props;
 const path = Astro.url.pathname;
 const normalizedPath =
   path.endsWith("/") || path.endsWith(".html") ? path : `${path}/`;
@@ -17,48 +19,58 @@ const canonical = Astro.site
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class={home ? "home" : "inner"}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} | RIKT</title>
+    <meta name="theme-color" content="#f5f2e7" />
+    <title>{title} — RIKT / Rishi Patel</title>
     <meta name="description" content={description} />
     <meta
       name="robots"
       content={noindex ? "noindex, follow" : "index, follow"}
     />
+    <meta property="og:title" content={`${title} — RIKT`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
     {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="/assets/editorial.woff"
+      as="font"
+      type="font/woff"
+      crossorigin
+    />
+    <script is:inline>
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem("rikt-theme") === "dark" ? "dark" : "light";
+      } catch {}
+    </script>
+    <script is:inline src="/scripts/site.js" defer></script>
   </head>
   <body>
-    <a class="skip-link" href="#main">
+    <a class="skip" href="#main">
       Skip to content
     </a>
-    <header class="site-header">
-      <a class="site-identity" href="/" aria-label="RIKT home">
-        RIKT
-      </a>
-      <nav aria-label="Main navigation">
-        <ul class="navigation">
-          {navigation.map(({ href, label }) => (
-            <li>
-              <a
-                href={href}
-                aria-current={
-                  normalizedPath.startsWith(href) ? "page" : undefined
-                }
-              >
-                {label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </header>
-    <main id="main" tabindex="-1">
+    <ThemeSwitch />
+    {!home && <SiteHeader />}
+    <main id="main" tabindex="-1" class:list={{ "inner-page": !home }}>
       <slot />
+      {!home && (
+        <>
+          <nav class="page-nav" aria-label="Return navigation">
+            <a href="/#drawing">← Back to the machine</a>
+            <a href="/#about">The person behind it ↗</a>
+          </nav>
+          <nav class="archive-navigation mono" aria-label="Archive navigation">
+            {navigation.map(({ href, label }) => (
+              <a href={href}>{label}</a>
+            ))}
+          </nav>
+        </>
+      )}
     </main>
-    <footer>
-      <p>RIKT — Rishi Patel</p>
-    </footer>
   </body>
 </html>

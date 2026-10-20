@@ -1,10 +1,11 @@
 ---
 title: "ProcureTrack"
 slug: "procuretrack"
-description: "Project details are being prepared."
-status: placeholder
+description: "A capstone project bringing workflow editing, vendor access, approvals, notifications, and audit history into one system."
+status: published
+subtitle: "Procurement workflow platform"
+tags: ["REACT", "TYPESCRIPT", "NODE.JS", "MONGODB"]
+order: 1
 ---
 
-Good things take time.
-
-Approved project details will appear here.
+A capstone project bringing workflow editing, vendor access, approvals, notifications, and audit history into one system.

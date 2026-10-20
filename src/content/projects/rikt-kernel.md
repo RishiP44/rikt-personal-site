@@ -1,10 +1,11 @@
 ---
-title: "RIKT Kernel"
+title: "RIKT"
 slug: "rikt-kernel"
-description: "Project details are being prepared."
-status: placeholder
+description: "Exploring whether a small, structured layer of project context can help coding agents make more appropriate reasoning decisions."
+status: published
+subtitle: "An ongoing experiment"
+tags: ["AGENT CONTEXT", "EXPERIMENT DESIGN"]
+order: 4
 ---
 
-Good things take time.
-
-Approved project details will appear here.
+Exploring whether a small, structured layer of project context can help coding agents make more appropriate reasoning decisions.

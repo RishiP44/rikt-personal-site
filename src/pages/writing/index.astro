@@ -6,14 +6,29 @@ const entries = await getPublished("writing");
 ---
 
 <BaseLayout
-  title="Writing"
-  description="Published writing from Rishi Patel, newest first."
+  title="Notes in the margins."
+  description="Thoughts on building, learning, and finding meaning along the way."
   noindex={entries.length === 0}
 >
-  <h1>Writing</h1>
+  <div class="page-heading">
+    <div class="eyebrow">05 / RECORDING MECHANISM</div>
+    <h1>Notes in the margins.</h1>
+    <p class="summary">
+      Thoughts on building, learning, and finding meaning along the way.
+    </p>
+  </div>
   {entries.length ? (
     <EntryList archive="writing" entries={entries} />
   ) : (
-    <p>No articles have been published yet. Good things take time.</p>
+    <div class="entries">
+      <div class="contact-block">
+        <p class="mono">THE FIRST PAGE IS STILL OPEN</p>
+        <p class="placeholder-note">
+          I’m collecting ideas before giving them a permanent home here. Essays
+          and notes will arrive as they are ready.
+        </p>
+        <p class="placeholder-note">No articles have been published yet.</p>
+      </div>
+    </div>
   )}
 </BaseLayout>

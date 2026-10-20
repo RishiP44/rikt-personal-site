@@ -1,25 +1,57 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { navigation } from "../lib/navigation";
+import SiteHeader from "../components/SiteHeader.astro";
+import AboutSection from "../components/AboutSection.astro";
+import machine from "../assets/machine.svg?raw";
 ---
 
 <BaseLayout
-  title="Rishi Patel"
-  description="RIKT, Rishi Patel’s evolving archive of work, projects, learning, and writing."
+  home
+  title="This is my design"
+  description="A personal drawing board by Rishi Patel. Explore work, projects, learning, and ideas through the RIKT Paradox Machine."
 >
-  <h1>Rishi Patel</h1>
-  <p>RIKT means the void.</p>
-  <p>
-    An evolving archive of work, projects, learning, writing, and personal
-    identity.
-  </p>
-  <nav aria-label="Site index">
-    <ul class="home-index">
-      {navigation.map(({ href, label }) => (
-        <li>
-          <a href={href}>{label}</a>
-        </li>
-      ))}
-    </ul>
+  <nav class="page-dots" aria-label="Sections">
+    <a href="#drawing" aria-label="The drawing" aria-current="true"></a>
+    <a href="#about" aria-label="The person" aria-current="false"></a>
   </nav>
+  <section class="screen drafting" id="drawing" aria-labelledby="intro-title">
+    <SiteHeader home />
+    <div class="intro">
+      <div class="eyebrow">AN ONGOING EXPLORATION</div>
+      <h1 id="intro-title">
+        This is <br />
+        my <em>design.</em>
+      </h1>
+      <p>
+        A collection of things I build,
+        <br />
+        questions I follow, and the
+        <br />
+        person I’m becoming.
+      </p>
+      <div class="signature">Rishi Patel</div>
+    </div>
+    <div class="drawing-wrap" set:html={machine} />
+    <p class="drawing-status" aria-live="polite">
+      Every part has a story. Choose one to begin.
+    </p>
+    <div class="drawing-notes">
+      FIG. 01 — THE PARADOX MACHINE
+      <br />
+      EVERYTHING MOVES AROUND NOTHING.
+    </div>
+    <div class="screen-footer">
+      <div class="folio">
+        <span>
+          <b>RIKT / 001</b>
+        </span>
+        <span class="edition">PERSONAL APPARATUS · 2026</span>
+      </div>
+      <a class="scroll-link" href="#about">
+        THE PERSON BEHIND THE DRAWING <span aria-hidden="true">↓</span>
+      </a>
+      <span>OTTAWA, CANADA</span>
+    </div>
+  </section>
+  <AboutSection />
 </BaseLayout>

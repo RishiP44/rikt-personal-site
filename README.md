@@ -1,15 +1,19 @@
-# RIKT v0.1
+# RIKT
 
-Rishi Patel's personal archive. RIKT means the void. This release is a minimal static skeleton for work, projects, learning, writing, and personal identity.
+Rishi Patel's personal archive. RIKT means the void. The accepted drawing-board design is integrated into the original static content and publishing system.
 
-Astro, strict TypeScript, Markdown content collections, and plain CSS. No database, login, CMS, analytics, external fonts, API keys, or client JavaScript. No GitHub repository or Cloudflare deployment is implied by these files.
+Astro, strict TypeScript, Markdown content collections, and plain CSS. No database, login, CMS, analytics, external font requests, or API keys. Small progressive-enhancement JavaScript handles theme preference, component descriptions and section indicators. Machine navigation is ordinary SVG links and works without JavaScript. Local P052 fonts and their license are included.
+
+## Drawing-board integration
+
+The visual source is Sites version 2, commit `96af5d87153a4ec84df2ef221757eaf0ad0320c4`. Shared Astro layouts/components render its design; `src/assets/machine.svg` is the accepted inline illustration. `src/styles/global.css` contains the paper, theme and responsive styles; `public/scripts/site.js` is the progressive enhancement. The Sites Python generator is not part of this build. See [integration notes](docs/sites-integration.md).
 
 ## Local development
 
 Use Node.js 24.19.0 (see `.node-version`) and npm 9.6.5 or newer. The minimum supported Node.js version is 22.22.0. Astro and dependency versions are locked in `package-lock.json`.
 
 ```powershell
-cd rikt-personal-site
+cd C:\Users\rishi\Documents\Project\MyWeb
 $env:ASTRO_TELEMETRY_DISABLED = '1'
 npm ci
 npm run dev
@@ -53,13 +57,13 @@ Publishing is an explicit status change; a future `publishedDate` does not sched
 
 ## Update other content
 
-- **About:** replace only the body of `src/content/about.md` with the approved long-form biography. Preserve its frontmatter. When approved for publication, set `status: published` and update `description`; its notice and `noindex` disappear, and it enters the configured sitemap. No route or layout changes are needed.
-- **Work:** edit `src/pages/work.astro`. Experience, skills, education, and resume are explicit placeholders. When approved content is ready, remove the placeholder notice and `noindex` prop. Add a real resume link only when supplied. If making this page indexable, add `/work/` to the sitemap's static paths.
-- **Contact:** edit `src/pages/contact.astro`. Replace the text placeholders only with confirmed `mailto:`, GitHub, and LinkedIn links. Remove the notice and `noindex` when approved; add `/contact/` to sitemap static paths then.
-- **Projects:** edit or add Markdown in `src/content/projects/`. Required fields are `title`, `slug`, `description`, and `status`. Publish approved project descriptions with `status: published`. Do not invent metrics or accomplishments.
+- **About:** edit `src/content/about.md`; its body feeds both the homepage About section and `/about/`. `lede` supplies the introductory sentence, and publication status controls the standalone page’s indexing. Keep factual edits owner-approved.
+- **Work:** edit `src/pages/work.astro`. Its approved experience summaries are published; do not add credentials, dates or results without confirmation.
+- **Contact:** edit `src/pages/contact.astro`. GitHub is confirmed; email is still explicitly forthcoming. Keep `noindex` until the incomplete contact page is ready for indexing; then add `/contact/` to the sitemap.
+- **Projects:** edit or add Markdown in `src/content/projects/`. Required fields are `title`, `slug`, `description`, and `status`. Publish approved project descriptions with `status: published`. Optional `subtitle`, `tags`, and `order` preserve the drawing-board card presentation. Do not invent metrics or accomplishments.
 - **Learning:** edit or add Markdown in `src/content/learning/`. Use the writing fields plus `subject`. Published records require `publishedDate`. The index automatically groups by subject and lists records newest first.
 
-All existing project and learning pages start as labelled placeholders. They remain available at the direct URLs in [the site structure](docs/site-structure.md), while public indexes show only published entries. An archive with zero published entries shows a friendly empty state and `noindex`. No fake entries, dates, or contact links are needed to fill the site.
+Four approved project summaries are published; the remaining project and learning records remain labelled placeholders. They remain available at the direct URLs in [the site structure](docs/site-structure.md), while public indexes show only published entries. An archive with zero published entries shows a friendly empty state and `noindex`. No fake entries, dates, or contact links are needed to fill the site.
 
 ## Search engine metadata
 
@@ -80,7 +84,7 @@ Replace the uppercase host before running this example. The setting is public co
 
 ## GitHub and Cloudflare Pages
 
-1. Create an empty GitHub repository for RIKT. This folder was initially empty and is not initialized as a Git repository by this implementation. Run `git init -b main`, add these source files, commit, add your confirmed GitHub remote, and push `main`. `.gitignore` excludes dependencies, build output, environment files, logs, and the publishing fixture. Never commit secrets.
+1. Use the existing repository `https://github.com/RishiP44/rikt-personal-site` and its `main` branch. Never push this site to the separate `rikt` repository. `.gitignore` excludes dependencies, build output, environment files, logs, and the publishing fixture. Never commit secrets.
 2. In Cloudflare, create a **Pages** project and connect that GitHub repository. Set production branch **main**, build command **npm run build**, output directory **dist**, and the repository root as root directory. Select Astro if a framework preset is requested. This is static hosting; no adapter, Wrangler, deployment script, infrastructure, token, or paid service is required.
 3. Use Node.js **24.19.0**, as pinned in `.node-version`. Disable automatic preview branch deployments in the Pages branch controls if you want only production deployments. No staging environment is required.
 4. Deploy, open the actual public URL, and verify the homepage, navigation, direct draft/placeholder routes, and response metadata. Set `SITE_URL` to that confirmed production origin in Pages build settings and rebuild. Verify the public sitemap and canonical URLs again.
@@ -90,4 +94,4 @@ Official references: [Astro content collections](https://docs.astro.build/en/gui
 
 ## Current limitations
 
-The biography, experience, skills, education, resume, contact details, project descriptions, and learning records await approved content. Styling is intentionally temporary. There is no search feature or publishing UI. Draft URLs are previews rather than private pages. Deployment, GitHub Actions, and production-origin metadata require verification in the actual connected repository and hosting environment.
+The accepted Sites biography, experience, four project summaries, learning overview and GitHub contact link are included. A direct email, remaining project case studies, dated learning records, and real writing await content. There is no search feature or publishing UI. Draft URLs are previews rather than private pages. Deployment and GitHub Actions must be verified against the exact pushed commit and live URL after each release.

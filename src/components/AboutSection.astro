@@ -1,0 +1,47 @@
+---
+import { Content, frontmatter } from "../content/about.md";
+import ContentNotice from "./ContentNotice.astro";
+---
+
+<section class="screen about" id="about" aria-labelledby="about-title">
+  <div class="about-top mono">
+    <span>01 / IDENTITY REGISTER</span>
+    <a href="#drawing">BACK TO THE DRAWING ↑</a>
+  </div>
+  <div class="about-grid">
+    <div>
+      <div class="eyebrow">THE PERSON BEHIND IT</div>
+      <h2 id="about-title">
+        Still learning.
+        <br />
+        Still building.
+        <br />
+        <em>Still becoming.</em>
+      </h2>
+      <p class="lede">{frontmatter.lede}</p>
+    </div>
+    <div class="about-copy">
+      <ContentNotice
+        status={
+          frontmatter.status === "published" ? "published" : "placeholder"
+        }
+      />
+      <Content />
+      <nav class="about-links mono" aria-label="Explore Rishi’s work">
+        <a href="/projects/">EXPLORE PROJECTS ↗</a>
+        <a
+          href="https://github.com/RishiP44"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GITHUB ↗
+        </a>
+        <a href="/contact/">SAY HELLO ↗</a>
+      </nav>
+    </div>
+  </div>
+  <footer class="about-bottom">
+    <p>A work in progress, much like its maker.</p>
+    <span class="mono">RISHI PATEL © {new Date().getFullYear()}</span>
+  </footer>
+</section>
