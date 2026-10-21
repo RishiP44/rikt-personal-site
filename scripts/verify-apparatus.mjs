@@ -1,118 +1,108 @@
 import assert from "node:assert/strict";
 import * as THREE from "three";
-import {
-  chapters,
-  chapterAt,
-  viewAt,
-  angleDifference,
-} from "../src/lib/apparatus.ts";
+import { chapters } from "../src/lib/apparatus.ts";
 import { createEngine, pickedChapter } from "../src/lib/ouroboros-model.ts";
-
-const destinations = [
-  "/about/",
-  "/work/",
-  "/projects/",
-  "/learning/",
-  "/writing/",
-  "/contact/",
-];
+import { rotateView } from "../src/lib/sculpture-geometry.ts";
 assert.deepEqual(
-  chapters.map((item) => item.href),
-  destinations,
+  chapters.map((c) => c.href),
+  ["/about/", "/work/", "/projects/", "/learning/", "/writing/", "/contact/"],
 );
-assert.equal(new Set(chapters.map((item) => item.id)).size, 6);
 const model = createEngine();
+assert.equal(new Set(chapters.map((c) => c.id)).size, 6);
 assert.deepEqual(
   [...model.parts.keys()].sort(),
-  chapters.map((item) => item.id).sort(),
+  chapters.map((c) => c.id).sort(),
 );
-let meshes = 0;
-model.root.traverse((object) => {
-  if (!(object instanceof THREE.Mesh)) return;
+let meshes = 0,
+  triangles = 0,
+  instances = 0;
+model.root.traverse((o) => {
+  if (!(o instanceof THREE.Mesh)) return;
   meshes++;
   assert(
-    chapters.some((item) => item.id === pickedChapter(object)),
-    "Every selectable mesh belongs to a real destination",
+    chapters.some((c) => c.id === pickedChapter(o)),
+    "Every mesh has a valid destination",
   );
-  const positions = object.geometry.getAttribute("position");
-  for (const value of positions.array)
-    assert(Number.isFinite(value), "Nonfinite model vertex");
+  const p = o.geometry.getAttribute("position");
+  for (const n of p.array) assert(Number.isFinite(n), "Finite vertices");
+  const count = o instanceof THREE.InstancedMesh ? o.count : 1;
+  if (o instanceof THREE.InstancedMesh) {
+    instances += count;
+    for (const n of o.instanceMatrix.array) assert(Number.isFinite(n));
+  }
+  triangles += ((o.geometry.index?.count ?? p.count) / 3) * count;
+  assert.notEqual(
+    o.geometry.type,
+    "BoxGeometry",
+    "Anatomy is not assembled from blocks",
+  );
 });
-assert(meshes > 20 && meshes < 500, "Bounded procedural scene");
-assert.equal(pickedChapter(new THREE.Group()), undefined);
+assert(meshes > 100 && meshes < 350);
+assert(instances >= 2000 && instances < 2500);
+assert(triangles < 250000, "Bounded geometry budget");
 let previous;
 for (let i = 0; i <= 240; i++) {
-  const progress = i / 240;
-  const view = viewAt(progress);
-  assert(Object.values(view).every(Number.isFinite));
-  model.setEffort(progress);
+  model.animate((i / 240) * 6.4);
   model.root.updateMatrixWorld(true);
   const bounds = new THREE.Box3().setFromObject(model.root);
-  assert(
-    [...bounds.min.toArray(), ...bounds.max.toArray()].every(Number.isFinite),
-  );
-  assert(
-    bounds.min.x > -4 &&
-      bounds.max.x < 4 &&
-      bounds.min.y > -4 &&
-      bounds.max.y < 4,
-  );
-  const rock = model.anchors.projects.clone();
+  for (const n of [...bounds.min.toArray(), ...bounds.max.toArray()])
+    assert(Number.isFinite(n) && Math.abs(n) < 4);
   if (previous)
     assert(
-      rock.distanceTo(previous) < 0.04,
-      "Scroll motion must not jump at a cycle boundary",
+      model.anchors.projects.distanceTo(previous) < 0.002,
+      "No motion discontinuity",
     );
-  previous = rock;
+  previous = model.anchors.projects.clone();
 }
-model.setEffort(0.2, true);
-const reduced = model.anchors.projects.clone();
-model.setEffort(0.8, true);
+model.animate(0);
+const opening = model.anchors.projects.clone();
+model.animate(6.4);
 assert(
-  reduced.equals(model.anchors.projects),
-  "Reduced motion keeps the pushing pose still",
+  opening.distanceTo(model.anchors.projects) < 1e-10,
+  "Closed motion loop",
 );
-assert.deepEqual(viewAt(-5), viewAt(0));
-assert.deepEqual(viewAt(5), viewAt(1));
-assert.deepEqual(
-  viewAt(0),
-  viewAt(1),
-  "The journey returns to its opening view",
-);
-assert(
-  Math.abs(angleDifference(40 * Math.PI, 0.2) - 0.2) < 1e-10,
-  "Reset takes the shortest arc after repeated turns",
-);
-const sections = [
-  { id: "drawing", top: 0, height: 800 },
-  { id: "about", top: 800, height: 1000 },
-  { id: "work", top: 1800, height: 800 },
-];
-assert.equal(chapterAt(0, sections), "drawing");
-assert.equal(chapterAt(700, sections), "about");
-assert.equal(chapterAt(1900, sections), "work");
-assert.equal(chapterAt(0, []), "drawing");
-model.setTheme(true);
-model.setTheme(false);
-model.setEffort(0);
-const camera = new THREE.PerspectiveCamera(37, 1, 0.1, 70);
+model.animate(1, true);
+const still = model.anchors.projects.clone();
+model.animate(3, true);
+assert(still.equals(model.anchors.projects), "Reduced-motion pose is static");
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100),
+  target = new THREE.Vector3();
+camera.position.set(0, 0, 12);
+camera.lookAt(target);
+rotateView(camera, target, new THREE.Vector3(1, 0, 0), Math.PI);
+assert(camera.position.z < -11.99, "Full pitch rotation reaches the back");
+rotateView(camera, target, new THREE.Vector3(1, 0, 0), Math.PI);
+assert(camera.position.distanceTo(new THREE.Vector3(0, 0, 12)) < 1e-10);
+rotateView(camera, target, new THREE.Vector3(0, 0, 1), Math.PI / 2);
+assert(Math.abs(camera.up.x) > 0.99, "Roll changes camera up");
+for (let i = 0; i < 120; i++)
+  rotateView(camera, target, new THREE.Vector3(1, 2, 3), Math.PI / 60);
+assert(Math.abs(camera.position.length() - 12) < 1e-9);
+assert(Math.abs(camera.up.length() - 1) < 1e-12);
 camera.position.set(0, 0.08, 11.4);
-camera.lookAt(0, 0, 0);
+camera.up.set(0, 1, 0);
+camera.lookAt(target);
 camera.updateMatrixWorld();
+model.animate(0);
 model.root.updateMatrixWorld(true);
-const ray = new THREE.Raycaster();
-ray.set(
+const ray = new THREE.Raycaster(
   camera.position,
   model.anchors.projects.clone().sub(camera.position).normalize(),
 );
-const hit = ray
-  .intersectObject(model.root, true)
-  .find((entry) => entry.object instanceof THREE.Mesh);
-assert(
-  hit && pickedChapter(hit.object) === "projects",
-  "The actual stone must be ray-selectable",
+assert.equal(
+  pickedChapter(ray.intersectObject(model.root, true)[0]?.object ?? null),
+  "projects",
+  "Stone is directly ray-selectable",
 );
+model.setTheme(true);
+model.setTheme(false);
 model.dispose();
 console.log(
-  `PASS: six destination mappings; ${meshes} actual meshes; finite bounded geometry in 241 poses; continuous scroll movement; reduced-motion still pose; chapter boundaries; real stone ray selection. Browser rendering, touch and accessibility require separate inspection.`,
+  "PASS: six direct mappings; " +
+    meshes +
+    " meshes; " +
+    instances +
+    " instanced scales; " +
+    triangles +
+    " triangles; finite bounded geometry in 241 poses; continuous periodic motion; reduced-motion stillness; unrestricted quaternion pitch and roll; direct stone ray selection. Browser and physical touch checks are separate.",
 );

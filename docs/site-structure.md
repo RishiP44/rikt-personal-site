@@ -14,11 +14,11 @@ src/
     writing/*.md             One sample draft
   content.config.ts          Frontmatter validation
   layouts/                   Shared document and content-entry layouts
-  lib/                       Content helpers, chapter views, procedural 3D model
+  lib/                       Content helpers, destinations, sculpture geometry and procedural 3D model
   scripts/ouroboros.ts        Optional Three.js browser controller
   pages/                     Static routes, collection routes, robots, sitemap, 404
   styles/global.css          Shared typography, themes and archive pages
-  styles/apparatus.css       Homepage journey and inspection layout
+  styles/apparatus.css       Sculpture stage, hotspots and view controls
 scripts/
   verify-build.mjs           Validate generated routes, links, metadata, visibility
   verify-apparatus.mjs       Model, destination, pose and ray selection checks
@@ -29,7 +29,7 @@ scripts/
 
 | Route                                           | Initial content / visibility                                               |
 | ----------------------------------------------- | -------------------------------------------------------------------------- |
-| `/`                                             | Scroll journey, optional 3D inspection, six HTML chapters; indexable       |
+| `/`                                             | Interactive sculpture and six direct page hotspots; indexable              |
 | `/about/`                                       | Shared published Markdown biography; indexable                             |
 | `/work/`                                        | Accepted experience summaries; indexable                                   |
 | `/projects/`                                    | Published entries only; four approved summaries                            |
@@ -60,11 +60,11 @@ Astro generates directory-style routes. Local routing accepts both slashless and
 
 `status` is required and is one of `placeholder`, `draft`, or `published`. Required `slug` is the stable URL key; filename changes do not change the URL. Duplicate slugs fail the build. Writing and learning require a valid `publishedDate` only when published; learning also requires `subject`. No dates or biographical claims are fabricated for placeholders.
 
-The homepage retains `#drawing` and `#about`, and adds `#work`, `#projects`, `#learning`, `#writing` and `#contact` chapters. Its six destinations are ordinary HTML anchors. Optional Three.js enhancement adds scroll-linked views and Inspect mode. `/about/` remains available, and every existing slug is retained. Four project summaries are published; learning has approved overview text plus the existing unpublished record routes.
+The homepage retains `#drawing`. Six direct HTML links open /about/, /work/, /projects/, /learning/, /writing/ and /contact/. The optional Three.js enhancement supports unrestricted arcball rotation, roll, pan and zoom from the opening view. Homepage prose and scroll chapters have been removed at the owner's request. All standalone routes, content and slugs remain intact.
 
 Every entry receives a route, including drafts and placeholders. Only published entries are returned to public indexes. All non-published entries show notices, receive `noindex, follow`, and are excluded from the sitemap. This allows direct preview without adding sample content to public listings. These routes are not private.
 
-About is a Markdown document with `status`, `description` and `lede` frontmatter, shared by the homepage and standalone route. Only `status: published` removes its placeholder state. Work and Contact remain simple editable Astro pages.
+About is a Markdown document with `status`, `description` and `lede` frontmatter, used by the standalone route. Only `status: published` removes its placeholder state. Work and Contact remain simple editable Astro pages.
 
 ## Deployment boundary
 

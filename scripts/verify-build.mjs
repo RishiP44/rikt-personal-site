@@ -55,14 +55,18 @@ export async function verifyBuild() {
   for (const route of planned) await stat(routeFile(route));
   const home = await readFile(routeFile("/"), "utf8");
   assert.match(home, /id="drawing"/);
-  assert.match(home, /id="about"/);
+  assert.doesNotMatch(
+    home,
+    /data-chapter|journey-content|part-detail/,
+    "Homepage is the sculpture and direct destinations only",
+  );
   const machineLinks = [
     ...home.matchAll(/<a class="part" href="([^"]+)" aria-label="([^"]+)"/g),
   ];
   assert.deepEqual(
     machineLinks.map((match) => match[1]).sort(),
     [
-      "#about",
+      "/about/",
       "/work/",
       "/projects/",
       "/learning/",
@@ -81,6 +85,11 @@ export async function verifyBuild() {
     );
   }
   await stat(path.join(dist, "assets", "FONT-LICENSE.txt"));
+  assert.equal(
+    (await readFile(path.join(dist, "assets", "manrope.ttf"))).readUInt32BE(0),
+    0x00010000,
+  );
+  await stat(path.join(dist, "assets", "MANROPE-LICENSE.txt"));
   const files = (await walk(dist)).filter((file) => file.endsWith(".html"));
   const pages = new Map(
     await Promise.all(
@@ -144,7 +153,7 @@ export async function verifyBuild() {
         "writing",
         "contact",
       ])
-        assert.match(home, new RegExp(`id="${id}" data-chapter="${id}"`));
+        assert.match(home, new RegExp(`data-scene-node="${id}"`));
     }
     assert.match(html, /class="theme-switch"[^>]*hidden/);
     assert.doesNotMatch(

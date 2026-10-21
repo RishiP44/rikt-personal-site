@@ -23,7 +23,7 @@ const canonical = Astro.site
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f5f2e7" />
+    <meta name="theme-color" content="#eceee9" />
     <title>{title} — RIKT / Rishi Patel</title>
     <meta name="description" content={description} />
     <meta
@@ -37,9 +37,9 @@ const canonical = Astro.site
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
     <link
       rel="preload"
-      href="/assets/editorial.woff"
+      href="/assets/manrope.ttf"
       as="font"
-      type="font/woff"
+      type="font/ttf"
       crossorigin
     />
     <script is:inline>
@@ -62,7 +62,7 @@ const canonical = Astro.site
         <>
           <nav class="page-nav" aria-label="Return navigation">
             <a href="/#drawing">← Back to the apparatus</a>
-            <a href="/#about">The person behind it ↗</a>
+            <a href="/about/">The person behind it ↗</a>
           </nav>
           <nav class="archive-navigation mono" aria-label="Archive navigation">
             {navigation.map(({ href, label }) => (

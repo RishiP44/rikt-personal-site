@@ -1,230 +1,18 @@
 import * as THREE from "three";
+import { ArcballControls } from "three/addons/controls/ArcballControls.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { createEngine, pickedChapter } from "../lib/ouroboros-model";
-import {
-  chapters,
-  clamp,
-  chapterAt,
-  viewAt,
-  angleDifference,
-  type ChapterId,
-} from "../lib/apparatus";
+import { rotateView } from "../lib/sculpture-geometry";
+import { chapters, type ChapterId } from "../lib/apparatus";
 
-const plate = document.querySelector<HTMLElement>("[data-apparatus]");
-if (plate) initialize(plate);
-
-function initialize(plate: HTMLElement) {
-  const canvas = plate.querySelector<HTMLCanvasElement>("canvas")!;
-  const viewport = plate.querySelector<HTMLElement>(".apparatus-viewport")!;
-  const toggle = plate.querySelector<HTMLButtonElement>(".inspect-toggle")!;
-  const controls = plate.querySelector<HTMLElement>(".apparatus-controls")!;
-  const tools = plate.querySelector<HTMLElement>(".inspection-tools")!;
-  const help = plate.querySelector<HTMLElement>("#inspection-help")!;
-  const detail = plate.querySelector<HTMLElement>(".part-detail")!;
-  const content = document.querySelector<HTMLElement>("#journey-content")!;
-  const chapterNodes = [
-    ...document.querySelectorAll<HTMLElement>("[data-chapter]"),
-  ];
-  const links = [
-    ...plate.querySelectorAll<HTMLAnchorElement>("[data-scene-node]"),
-  ];
-  const progressBar = document.querySelector<HTMLElement>(
-    ".journey-progress-fill",
-  )!;
-  const sheet = document.querySelector<HTMLElement>("[data-sheet]")!;
-  const progressLabel = document.querySelector<HTMLElement>("[data-progress]")!;
-  const navLinks = [
-    ...document.querySelectorAll<HTMLAnchorElement>(".journey-index a"),
-  ];
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+const stage = document.querySelector<HTMLElement>("[data-apparatus]");
+if (stage) enhance(stage);
+function enhance(stage: HTMLElement) {
+  const canvas = stage.querySelector<HTMLCanvasElement>("canvas")!;
+  const viewport = stage.querySelector<HTMLElement>(".apparatus-viewport")!;
+  const tools = stage.querySelector<HTMLElement>(".apparatus-controls")!;
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   let renderer: THREE.WebGLRenderer;
-  let engine: ReturnType<typeof createEngine>;
-  let scene: THREE.Scene;
-  let camera: THREE.PerspectiveCamera;
-  let frame = 0,
-    lastTime = 0,
-    progress = 0,
-    motionProgress = 0,
-    inspect = false,
-    zoom = 1,
-    graphicsReady = false;
-  let sectionPositions: { id: string; top: number; height: number }[] = [];
-  let selected: ChapterId | undefined;
-  let pointer:
-    | {
-        id: number;
-        x: number;
-        y: number;
-        startX: number;
-        startY: number;
-        moved: boolean;
-      }
-    | undefined;
-  let width = 1,
-    height = 1;
-  const target = { x: -0.13, y: -0.35, z: 0.08 };
-  const raycaster = new THREE.Raycaster();
-  const mouse = new THREE.Vector2();
-
-  function updateStory() {
-    progress = clamp(
-      window.scrollY /
-        Math.max(1, document.documentElement.scrollHeight - window.innerHeight),
-      0,
-      1,
-    );
-    const id = chapterAt(window.scrollY, sectionPositions);
-    document.documentElement.dataset.journeyChapter = id;
-    const chapter = chapters.find((c) => c.id === id);
-    sheet.textContent = chapter
-      ? `${chapter.number} / ${chapter.label}`
-      : "00 / The apparatus";
-    progressLabel.textContent = `${String(Math.round(progress * 100)).padStart(3, "0")}%`;
-    progressBar.style.transform = `scaleY(${progress})`;
-    navLinks.forEach((link) =>
-      link.setAttribute("aria-current", String(link.hash === `#${id}`)),
-    );
-    links.forEach((link) =>
-      link.classList.toggle("is-active", link.dataset.sceneNode === id),
-    );
-    if (!inspect) Object.assign(target, viewAt(progress));
-    requestRender();
-  }
-
-  function resize() {
-    sectionPositions = chapterNodes.map((node) => ({
-      id: node.id,
-      top: node.getBoundingClientRect().top + window.scrollY,
-      height: node.offsetHeight,
-    }));
-    const rect = viewport.getBoundingClientRect();
-    width = rect.width;
-    height = rect.height;
-    if (renderer) {
-      renderer.setSize(width, height, false);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-      camera.aspect = width / Math.max(1, height);
-      camera.updateProjectionMatrix();
-    }
-    const rays = plate.querySelector(".apparatus-rays")!;
-    rays.setAttribute(
-      "viewBox",
-      `0 0 ${window.innerWidth} ${window.innerHeight}`,
-    );
-    updateStory();
-  }
-
-  function requestRender() {
-    if (graphicsReady && !frame && !document.hidden)
-      frame = requestAnimationFrame(render);
-  }
-
-  function render(time: number) {
-    frame = 0;
-    const delta = lastTime ? Math.min((time - lastTime) / 1000, 0.05) : 1 / 60;
-    lastTime = time;
-    const amount = reduce.matches ? 1 : 1 - Math.exp(-9 * delta);
-    let remaining = 0;
-    for (const axis of ["x", "y", "z"] as const) {
-      const difference = angleDifference(
-        engine.root.rotation[axis],
-        target[axis],
-      );
-      engine.root.rotation[axis] += difference * amount;
-      remaining += Math.abs(difference);
-    }
-    engine.root.scale.setScalar(zoom);
-    const progressDifference = progress - motionProgress;
-    motionProgress += progressDifference * amount;
-    remaining += Math.abs(progressDifference);
-    engine.setEffort(motionProgress, reduce.matches);
-    engine.root.updateMatrixWorld(true);
-    renderer.render(scene, camera);
-    const rect = viewport.getBoundingClientRect();
-    for (const link of links) {
-      const id = link.dataset.sceneNode as ChapterId;
-      const point = engine.anchors[id]
-        .clone()
-        .applyMatrix4(engine.root.matrixWorld)
-        .project(camera);
-      const label = link.getBoundingClientRect();
-      const line = plate.querySelector<SVGLineElement>(`[data-ray="${id}"]`)!;
-      line.setAttribute("x1", String(rect.left + ((point.x + 1) * width) / 2));
-      line.setAttribute("y1", String(rect.top + ((1 - point.y) * height) / 2));
-      line.setAttribute("x2", String(label.left + 10));
-      line.setAttribute("y2", String(label.top + label.height / 2));
-    }
-    if (remaining > 0.001) requestRender();
-    else lastTime = 0;
-  }
-
-  function select(id: ChapterId) {
-    selected = id;
-    const item = chapters.find((c) => c.id === id)!;
-    plate.querySelector<HTMLElement>("[data-part-number]")!.textContent =
-      `${item.number} / ${item.part}`;
-    plate.querySelector<HTMLElement>("[data-part-name]")!.textContent =
-      item.label;
-    plate.querySelector<HTMLElement>("[data-part-description]")!.textContent =
-      item.description;
-    const link = plate.querySelector<HTMLAnchorElement>("[data-part-link]")!;
-    link.href = item.href;
-    link.textContent = `Open ${item.label} ↗`;
-    detail.hidden = false;
-  }
-
-  function releasePointer() {
-    if (pointer && canvas.hasPointerCapture(pointer.id))
-      canvas.releasePointerCapture(pointer.id);
-    pointer = undefined;
-    canvas.classList.remove("is-dragging");
-  }
-
-  function setInspect(value: boolean) {
-    releasePointer();
-    inspect = value;
-    document.documentElement.classList.toggle("is-inspecting", value);
-    content.inert = value;
-    if (value) content.setAttribute("aria-hidden", "true");
-    else content.removeAttribute("aria-hidden");
-    toggle.setAttribute("aria-pressed", String(value));
-    toggle.innerHTML = value
-      ? 'Back to the journey <span aria-hidden="true">↙</span>'
-      : 'Inspect the apparatus <span aria-hidden="true">↗</span>';
-    tools.hidden = !value;
-    canvas.tabIndex = value ? 0 : -1;
-    help.textContent = value
-      ? "Drag or use arrow keys to rotate. + / − to zoom. Escape to return."
-      : "Scroll to follow the story. Inspect to take a closer look.";
-    if (value) {
-      select(selected ?? "work");
-      canvas.focus({ preventScroll: true });
-    } else {
-      detail.hidden = true;
-      zoom = 1;
-      Object.assign(target, viewAt(progress));
-      toggle.focus({ preventScroll: true });
-    }
-    resize();
-  }
-
-  function fallback() {
-    graphicsReady = false;
-    if (frame) cancelAnimationFrame(frame);
-    frame = 0;
-    if (inspect) setInspect(false);
-    plate.dataset.renderState = "fallback";
-    canvas.setAttribute("aria-hidden", "true");
-    document.documentElement.classList.remove("scene-enhanced");
-    controls.hidden = true;
-    plate.querySelector<HTMLElement>(".static-note")!.textContent =
-      "Static study · explore through the chapter links.";
-  }
-
-  // Story metadata remains useful even when a graphics context is unavailable.
-  window.addEventListener("scroll", updateStory, { passive: true });
-  window.addEventListener("resize", resize, { passive: true });
-  document.fonts.ready.then(resize);
-  resize();
   try {
     renderer = new THREE.WebGLRenderer({
       canvas,
@@ -232,155 +20,345 @@ function initialize(plate: HTMLElement) {
       alpha: true,
       powerPreference: "low-power",
     });
-    renderer.setClearColor(0x000000, 0);
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(37, 1, 0.1, 70);
-    camera.position.set(0, 0.08, 11.4);
-    camera.lookAt(0, 0, 0);
-    engine = createEngine();
-    scene.add(engine.root);
-    scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-    const key = new THREE.DirectionalLight(0xffffff, 2.2);
-    key.position.set(-4, 6, 8);
-    scene.add(key);
-    const fill = new THREE.DirectionalLight(0xc4bdab, 0.5);
-    fill.position.set(4, -1, 2);
-    scene.add(fill);
-    engine.setTheme(document.documentElement.dataset.theme === "dark");
-    plate.dataset.renderState = "ready";
-    canvas.removeAttribute("aria-hidden");
-    graphicsReady = true;
-    document.documentElement.classList.add("scene-enhanced");
-    controls.hidden = false;
-    resize();
   } catch {
-    fallback();
     return;
   }
-
-  toggle.addEventListener("click", () => setInspect(!inspect));
-  const zoomBy = (amount: number) => {
-    zoom = clamp(zoom + amount, 0.7, 1.55);
-    requestRender();
-  };
-  plate
-    .querySelector("[data-control=zoom-in]")!
-    .addEventListener("click", () => zoomBy(0.12));
-  plate
-    .querySelector("[data-control=zoom-out]")!
-    .addEventListener("click", () => zoomBy(-0.12));
-  plate.querySelector("[data-control=reset]")!.addEventListener("click", () => {
-    zoom = 1;
-    Object.assign(target, viewAt(progress));
-    requestRender();
+  const model = createEngine(),
+    scene = new THREE.Scene();
+  scene.add(model.root);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.92;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
+  const pmrem = new THREE.PMREMGenerator(renderer),
+    room = new RoomEnvironment();
+  const environment = pmrem.fromScene(room, 0.04);
+  scene.environment = environment.texture;
+  scene.environmentIntensity = 0.55;
+  room.dispose();
+  pmrem.dispose();
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x647267, 0.85));
+  const key = new THREE.DirectionalLight(0xfff5e5, 2.3);
+  key.position.set(-4, 6, 7);
+  key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048);
+  Object.assign(key.shadow.camera, {
+    left: -4,
+    right: 4,
+    top: 4,
+    bottom: -4,
+    near: 0.1,
+    far: 25,
   });
-  canvas.addEventListener("pointerdown", (event) => {
-    if (!inspect || pointer || event.button !== 0) return;
-    pointer = {
-      id: event.pointerId,
-      x: event.clientX,
-      y: event.clientY,
-      startX: event.clientX,
-      startY: event.clientY,
-      moved: false,
-    };
-    canvas.setPointerCapture(event.pointerId);
-    canvas.classList.add("is-dragging");
-  });
-  canvas.addEventListener("pointermove", (event) => {
-    if (!pointer || pointer.id !== event.pointerId) return;
-    target.y += (event.clientX - pointer.x) * 0.008;
-    target.x = clamp(target.x + (event.clientY - pointer.y) * 0.008, -1.3, 1.3);
-    pointer.moved ||=
-      Math.hypot(
-        event.clientX - pointer.startX,
-        event.clientY - pointer.startY,
-      ) > 6;
-    pointer.x = event.clientX;
-    pointer.y = event.clientY;
-    requestRender();
-  });
-  canvas.addEventListener("pointerup", (event) => {
-    if (!pointer || pointer.id !== event.pointerId) return;
-    if (!pointer.moved) {
-      const rect = canvas.getBoundingClientRect();
-      mouse.set(
-        ((event.clientX - rect.left) / rect.width) * 2 - 1,
-        (-(event.clientY - rect.top) / rect.height) * 2 + 1,
-      );
-      raycaster.setFromCamera(mouse, camera);
-      const hit = raycaster
-        .intersectObject(engine.root, true)
-        .find((item) => item.object instanceof THREE.Mesh);
-      const id = hit && pickedChapter(hit.object);
-      if (id) select(id);
-    }
-    releasePointer();
-  });
-  canvas.addEventListener("pointercancel", releasePointer);
-  canvas.addEventListener("lostpointercapture", releasePointer);
-  canvas.addEventListener("keydown", (event) => {
-    if (!inspect) return;
-    const directions: Record<string, [number, number]> = {
-      ArrowLeft: [0, -0.15],
-      ArrowRight: [0, 0.15],
-      ArrowUp: [-0.15, 0],
-      ArrowDown: [0.15, 0],
-    };
-    if (directions[event.key]) {
-      event.preventDefault();
-      target.x = clamp(target.x + directions[event.key][0], -1.3, 1.3);
-      target.y += directions[event.key][1];
-      requestRender();
-    }
-    if (["+", "=", "-", "_"].includes(event.key)) {
-      event.preventDefault();
-      zoomBy(event.key === "-" || event.key === "_" ? -0.12 : 0.12);
-    }
-  });
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && inspect) {
-      event.preventDefault();
-      setInspect(false);
-    }
-  });
-  links.forEach((link) =>
-    link.addEventListener("click", (event) => {
-      if (inspect) {
-        event.preventDefault();
-        select(link.dataset.sceneNode as ChapterId);
-      }
-    }),
+  key.shadow.normalBias = 0.025;
+  scene.add(key);
+  const fill = new THREE.DirectionalLight(0xd6e7eb, 1.1);
+  fill.position.set(4, 1, -5);
+  scene.add(fill);
+  const floorMaterial = new THREE.ShadowMaterial({ opacity: 0.075 });
+  const floorGeometry = new THREE.PlaneGeometry(200, 200),
+    floor = new THREE.Mesh(floorGeometry, floorMaterial);
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -3.05;
+  floor.receiveShadow = true;
+  scene.add(floor);
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  const initialDirection = new THREE.Vector3(0.7, 0.55, 12).normalize();
+  let fit = 12;
+  camera.position.copy(initialDirection).multiplyScalar(fit);
+  // The runtime exposes target; the upstream declaration currently omits it.
+  const controls = new ArcballControls(
+    camera,
+    canvas,
+    scene,
+  ) as ArcballControls & { target: THREE.Vector3 };
+  controls.enableGrid = false;
+  controls.enableFocus = false;
+  controls.cursorZoom = false;
+  controls.enableAnimations = !reduced.matches;
+  controls.dampingFactor = 18;
+  controls.wMax = 2.5;
+  controls.setGizmosVisible(false);
+  let paused = false,
+    elapsed = 0,
+    last = performance.now(),
+    frame = 0,
+    disposed = false;
+  const projected = new Map<ChapterId, THREE.Vector2>();
+  const links = new Map(
+    chapters.map((c) => [
+      c.id,
+      stage.querySelector<HTMLAnchorElement>(
+        '[data-scene-node="' + c.id + '"]',
+      )!,
+    ]),
   );
-  new MutationObserver(() => {
-    engine.setTheme(document.documentElement.dataset.theme === "dark");
-    requestRender();
-  }).observe(document.documentElement, {
+  function draw(now: number) {
+    frame = 0;
+    if (disposed) return;
+    const dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    if (!paused && !reduced.matches && !document.hidden) elapsed += dt;
+    model.animate(elapsed, reduced.matches);
+    model.root.updateMatrixWorld(true);
+    camera.updateMatrixWorld();
+    renderer.render(scene, camera);
+    const outer = stage.getBoundingClientRect(),
+      view = canvas.getBoundingClientRect();
+    for (const { id } of chapters) {
+      const v = model.anchors[id].clone().project(camera);
+      const x = (v.x * 0.5 + 0.5) * view.width + view.left - outer.left;
+      const y = (-v.y * 0.5 + 0.5) * view.height + view.top - outer.top;
+      projected.set(id, new THREE.Vector2(x, y));
+      const label = links.get(id)!.getBoundingClientRect();
+      const line = stage.querySelector<SVGLineElement>(
+        '[data-ray="' + id + '"]',
+      )!;
+      const lx = label.left + label.width / 2 - outer.left,
+        ly = label.top + label.height / 2 - outer.top;
+      line.setAttribute("x1", String(x));
+      line.setAttribute("y1", String(y));
+      line.setAttribute("x2", String(lx));
+      line.setAttribute("y2", String(ly));
+      for (const attr of ["pin", "halo"]) {
+        const circle = stage.querySelector<SVGCircleElement>(
+          "[data-" + attr + '="' + id + '"]',
+        )!;
+        circle.setAttribute("cx", String(x));
+        circle.setAttribute("cy", String(y));
+      }
+      stage.querySelector<SVGGElement>(
+        '[data-marker="' + id + '"]',
+      )!.style.visibility = v.z > 1 ? "hidden" : "visible";
+    }
+    if (!paused && !reduced.matches && !document.hidden) requestDraw();
+  }
+  function requestDraw() {
+    if (!frame && !disposed) {
+      frame = requestAnimationFrame(draw);
+    }
+  }
+  function resize() {
+    const box = viewport.getBoundingClientRect(),
+      aspect = box.width / Math.max(1, box.height);
+    const next = Math.max(
+      10.7,
+      (6.4 / (2 * Math.tan(THREE.MathUtils.degToRad(19)) * aspect)) * 1.1,
+    );
+    camera.position
+      .sub(controls.target)
+      .multiplyScalar(next / fit)
+      .add(controls.target);
+    fit = next;
+    camera.aspect = aspect;
+    camera.updateProjectionMatrix();
+    controls.minDistance = fit * 0.48;
+    controls.maxDistance = fit * 2.7;
+    renderer.setSize(box.width, box.height, false);
+    controls.update();
+    requestDraw();
+  }
+  const observer = new ResizeObserver(resize);
+  observer.observe(viewport);
+  const themeObserver = new MutationObserver(() => {
+    model.setTheme(document.documentElement.dataset.theme === "dark");
+    requestDraw();
+  });
+  themeObserver.observe(document.documentElement, {
     attributes: true,
     attributeFilter: ["data-theme"],
   });
-  reduce.addEventListener("change", requestRender);
-  document.addEventListener("visibilitychange", () => {
+  model.setTheme(document.documentElement.dataset.theme === "dark");
+  controls.addEventListener("change", requestDraw);
+  function reset() {
+    controls.target.set(0, 0, 0);
+    camera.up.set(0, 1, 0);
+    camera.position.copy(initialDirection).multiplyScalar(fit);
+    camera.lookAt(0, 0, 0);
+    controls.setCamera(camera);
+    controls.setGizmosVisible(false);
+    controls.saveState();
+    requestDraw();
+  }
+  function zoom(factor: number) {
+    camera.position
+      .sub(controls.target)
+      .multiplyScalar(factor)
+      .clampLength(controls.minDistance, controls.maxDistance)
+      .add(controls.target);
+    controls.update();
+    requestDraw();
+  }
+  function rotate(axis: THREE.Vector3, angle: number) {
+    rotateView(camera, controls.target, axis, angle);
+    controls.update();
+    requestDraw();
+  }
+  function pause() {
+    paused = !paused;
+    const button = stage.querySelector<HTMLButtonElement>(
+      '[data-control="pause"]',
+    )!;
+    button.setAttribute("aria-pressed", String(paused));
+    button.setAttribute(
+      "aria-label",
+      paused ? "Resume sculpture motion" : "Pause sculpture motion",
+    );
+    button.textContent = paused ? "▷" : "Ⅱ";
+    requestDraw();
+  }
+  function action(name: string) {
+    if (name === "reset") reset();
+    if (name === "zoom-in") zoom(0.86);
+    if (name === "zoom-out") zoom(1.16);
+    if (name === "roll-left" || name === "roll-right")
+      rotate(
+        camera.getWorldDirection(new THREE.Vector3()),
+        name === "roll-left" ? 0.18 : -0.18,
+      );
+    if (name === "pause") pause();
+  }
+  tools.addEventListener("click", (event) => {
+    const button = (event.target as Element).closest<HTMLButtonElement>(
+      "[data-control]",
+    );
+    if (button) action(button.dataset.control!);
+  });
+  canvas.addEventListener("keydown", (event) => {
+    const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+    const map: Record<string, () => void> = {
+      ArrowLeft: () => rotate(camera.up, 0.12),
+      ArrowRight: () => rotate(camera.up, -0.12),
+      ArrowUp: () => rotate(right, 0.12),
+      ArrowDown: () => rotate(right, -0.12),
+      q: () => action("roll-left"),
+      e: () => action("roll-right"),
+      "+": () => zoom(0.86),
+      "=": () => zoom(0.86),
+      "-": () => zoom(1.16),
+      Home: reset,
+      " ": pause,
+    };
+    const handler = map[event.key];
+    if (handler) {
+      event.preventDefault();
+      handler();
+    }
+  });
+  const pointers = new Map<
+    number,
+    { x: number; y: number; moved: boolean; button: number }
+  >();
+  let multi = false;
+  canvas.addEventListener("pointerdown", (event) => {
+    pointers.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY,
+      moved: false,
+      button: event.button,
+    });
+    if (pointers.size > 1) multi = true;
+  });
+  window.addEventListener("pointermove", (event) => {
+    const point = pointers.get(event.pointerId);
+    if (
+      point &&
+      Math.hypot(event.clientX - point.x, event.clientY - point.y) > 6
+    )
+      point.moved = true;
+  });
+  function release(event: PointerEvent) {
+    const point = pointers.get(event.pointerId);
+    pointers.delete(event.pointerId);
+    if (
+      point &&
+      !point.moved &&
+      !multi &&
+      point.button === 0 &&
+      event.type === "pointerup"
+    ) {
+      const rect = stage.getBoundingClientRect(),
+        pos = new THREE.Vector2(
+          event.clientX - rect.left,
+          event.clientY - rect.top,
+        );
+      const close = [...projected].sort(
+        (a, b) => a[1].distanceTo(pos) - b[1].distanceTo(pos),
+      )[0];
+      let id: ChapterId | undefined =
+        close && close[1].distanceTo(pos) < 18 ? close[0] : undefined;
+      if (!id) {
+        const bounds = canvas.getBoundingClientRect(),
+          ray = new THREE.Raycaster();
+        ray.setFromCamera(
+          new THREE.Vector2(
+            ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
+            (-(event.clientY - bounds.top) / bounds.height) * 2 + 1,
+          ),
+          camera,
+        );
+        id = pickedChapter(
+          ray.intersectObject(model.root, true)[0]?.object ?? null,
+        );
+      }
+      const destination = chapters.find((c) => c.id === id);
+      if (destination) window.location.assign(destination.href);
+    }
+    if (pointers.size === 0) multi = false;
+  }
+  window.addEventListener("pointerup", release);
+  window.addEventListener("pointercancel", release);
+  const motionChange = () => {
+    controls.enableAnimations = !reduced.matches;
+    requestDraw();
+  };
+  reduced.addEventListener("change", motionChange);
+  const visibility = () => {
+    last = performance.now();
     if (document.hidden) {
       cancelAnimationFrame(frame);
       frame = 0;
-      lastTime = 0;
-    } else requestRender();
-  });
+    } else requestDraw();
+  };
+  document.addEventListener("visibilitychange", visibility);
   canvas.addEventListener("webglcontextlost", (event) => {
     event.preventDefault();
-    fallback();
-  });
-  window.addEventListener("pagehide", (event) => {
+    stage.dataset.renderState = "static";
+    canvas.hidden = true;
+    tools.hidden = true;
     cancelAnimationFrame(frame);
     frame = 0;
-    if (event.persisted) return;
-    engine.dispose();
-    renderer.dispose();
+    disposed = true;
   });
-  window.addEventListener("pageshow", (event) => {
-    if (event.persisted) requestRender();
-  });
+  window.addEventListener(
+    "pagehide",
+    (event) => {
+      if (event.persisted) return;
+      disposed = true;
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      themeObserver.disconnect();
+      controls.dispose();
+      model.dispose();
+      environment.dispose();
+      floorGeometry.dispose();
+      floorMaterial.dispose();
+      renderer.dispose();
+      window.removeEventListener("pointerup", release);
+      window.removeEventListener("pointercancel", release);
+      reduced.removeEventListener("change", motionChange);
+      document.removeEventListener("visibilitychange", visibility);
+    },
+    { once: true },
+  );
+  stage.dataset.renderState = "webgl";
+  canvas.hidden = false;
+  tools.hidden = false;
+  stage.querySelector("[data-gesture-note]")!.textContent =
+    "Drag · Pinch · Twist";
+  resize();
+  reset();
+  requestDraw();
 }

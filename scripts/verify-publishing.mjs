@@ -42,7 +42,8 @@ try {
   assert(article.includes(`href="${testOrigin}/writing/publishing-check/"`));
   assert.match(index, /href="\/writing\/publishing-check\/"/);
   const homepage = await readFile(path.join(root, "dist/index.html"), "utf8");
-  assert.match(homepage, /href="\/writing\/publishing-check\/"/);
+  assert.doesNotMatch(homepage, /href="\/writing\/publishing-check\/"/);
+  assert.match(homepage, /href="\/writing\/"/);
   assert.doesNotMatch(homepage, /href="\/writing\/sample-draft\/"/);
   assert.doesNotMatch(index, /href="\/writing\/sample-draft\/"/);
   assert(sitemap.includes(`${testOrigin}/writing/publishing-check/`));

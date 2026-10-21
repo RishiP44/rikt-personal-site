@@ -1,3 +1,27 @@
+# Sculpture atlas — current direction
+
+October 21, 2026: supersedes the scroll-led homepage below at the owner's request. Preserve Astro, Markdown publishing and existing page content. The homepage now contains the sculpture and six direct page hotspots; there is no introductory prose, scroll chapter or selection panel.
+
+The Heron reference (https://heronaiapp.com/) was inspected directly. Its opening is an architectural drawing with restrained typography, fine framing and small orange annotations. RIKT uses this restrained art direction with original, genuinely three-dimensional geometry; it does not copy Heron's building or text. Manrope is served locally with its SIL Open Font License.
+
+The continuous anatomical torso, shaped limbs, fingers, facial details, 2,016 instanced serpent scales, defined head, irregular stone and closed terrain replace the earlier voxel composition. Three.js ArcballControls supports unrestricted orbit, pan, pinch and two-finger roll. Keyboard arrows, Q/E, zoom, reset and pause provide alternatives. A still pose and no inertia respect reduced motion. Native HTML destination links and a revised SVG fallback remain available without WebGL or JavaScript.
+
+The figure makes a subtle periodic effort with planted feet; the stone rocks slightly rather than translating down the slope. This is a conceptual sculpture, not a physically simulated or certified mechanism. Procedural anatomy remains an artistic approximation. No external model, Anatomy module, service, analytics or API key is introduced.
+
+Verification for this revision is recorded separately after actual execution; the historical results below apply only to the previous revision. The publishing test now requires new articles to appear in Writing and the sitemap, while keeping the homepage free of article cards. This follows the changed homepage requirement.
+
+## Executed local verification — sculpture atlas
+
+All six commands exited 0: `npm run format:check`, `npm run check`, `npm run verify:apparatus`, `npm run build`, `npm run verify`, and `npm run verify:publishing`. Astro checked 34 files with zero errors, warnings or hints. The production build generated 22 pages. Artifact verification checked 21 planned routes, 327 local links/anchors/assets and ten unpublished entries. The temporary Markdown publication check succeeded and removed its fixture.
+
+Model checks cover six destinations, 164 meshes, 2,016 instanced scales and 182,568 triangles across 241 finite bounded poses, loop continuity, reduced-motion stillness, full quaternion pitch/roll and direct stone ray selection. Browser inspection covered desktop 1440 × 900, mobile 390 × 844 and short 390 × 600 layouts; all six direct destinations, stone hotspot navigation, diagonal/rear orbiting, keyboard pitch/roll, zoom, reset, pause, themes and browser Back were exercised. The small viewport uses normal vertical scrolling to keep controls accessible; there was no horizontal overflow. This is primary-agent review, not independent verification.
+
+Production dependency audit exited 0 with no reported vulnerabilities. Biography, content routes and dependency files remain unchanged. The optional 3D module is 618915 bytes minified / 153631 bytes gzip; the build retains its bundle-size warning. Physical multi-touch gestures and frame-rate benchmarking were not executed. Reduced motion was verified at model level; forced context loss and a JavaScript-disabled browser were not run. Early development exposed driver shader precision warnings and a removed shadow constant; the constant was corrected before final checks. Raw logs, bounded publication scan, source manifest and screenshots are retained in the visualization workspace’s `rikt-sculpture-atlas` folder. Deployment must still be checked against the actual pushed revision and live URL.
+
+---
+
+## Retained historical record — previous scroll-led release
+
 # Apparatus 02 — the Ouroboric Engine
 
 Direction approved October 21, 2026: a scroll-led journey, with optional free 3D inspection. Preserve Astro, static content routes, Markdown publishing, and the current real biography/projects. This is an original conceptual sculpture, not a mechanically certified device or continuation of the separate prototype's gates.

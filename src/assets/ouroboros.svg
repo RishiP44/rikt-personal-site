@@ -1,15 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720" fill="none" role="img" aria-labelledby="ouro-title ouro-desc">
-  <title id="ouro-title">The Ouroboric Engine</title><desc id="ouro-desc">A serpent holds its tail around an open center. Within its lower arc, a geometric Sisyphus leans into a faceted stone on an ascending mountain path.</desc>
-  <g stroke="currentColor" stroke-width="1">
-    <circle cx="360" cy="350" r="280" opacity=".22"/><circle cx="360" cy="350" r="269" stroke-dasharray="2 16" opacity=".35"/>
-    <path d="M595 248A247 247 0 1 0 605 320" stroke-width="13" opacity=".6"/><path d="M592 241l30 8 12 29-18 18-28-12-8-23Z" fill="currentColor" opacity=".75"/>
-    <path d="M606 320l13-39-24 10Z" fill="currentColor" opacity=".5"/><circle cx="615" cy="262" r="3"/>
-    <path d="M163 492l328-172-20 208-117 63-145-17Z" fill="currentColor" fill-opacity=".07"/>
-    <path d="M163 492l328-172M190 477l33 51-14 46m36-126 35 66-9 74m33-171 28 80-5 88m40-202 28 86-9 85m40-207 27 89-12 85" opacity=".5"/>
-    <path d="M310 434l-15-33 6-53 22-20 27 19-7 35 27 11-6 17-43-12-5 44 15 36-14 10-24-45-36 29-14-15Z" fill="currentColor" fill-opacity=".8"/>
-    <path d="M305 324l-2-27 22-9 18 14-4 25-19 9Z" fill="currentColor" fill-opacity=".85"/>
-    <path d="M383 328l43-18 44 22 12 43-28 39-48 1-33-38Z" fill="currentColor" fill-opacity=".12"/>
-    <path d="M383 328l34 22 9-40m-9 40 43 11 10-29m-53 18-8 43-36-16m36 16 45 21 6-53" opacity=".6"/>
-    <path d="M360 55v16m0 558v16M65 350h16m558 0h16" opacity=".4"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 700" role="img" aria-labelledby="ouro-title ouro-desc">
+<title id="ouro-title">Sisyphus and the Ouroboros</title><desc id="ouro-desc">A sculptural figure pushes a stone up a sloping ridge, enclosed by a serpent that returns to its tail. The six surrounding links lead to the archive pages.</desc>
+<defs><radialGradient id="stone"><stop stop-color="#b8bcb1"/><stop offset="1" stop-color="#747e73"/></radialGradient><linearGradient id="ridge" x2=".4" y2="1"><stop stop-color="#b6bcb0"/><stop offset="1" stop-color="#555f55"/></linearGradient><pattern id="scales" width="13" height="12" patternUnits="userSpaceOnUse"><path d="M0 0Q6.5 15 13 0M-6 6Q0 21 6 6M7 6Q13 21 19 6" fill="none" stroke="#e0e1d5" stroke-width=".7"/></pattern></defs>
+<g fill="none" stroke="#697568"><path d="M578 225C530 101 392 60 270 103S72 275 112 422 299 626 438 574 629 392 586 255" stroke-width="28"/><path d="M578 225C530 101 392 60 270 103S72 275 112 422 299 626 438 574 629 392 586 255" stroke="url(#scales)" stroke-width="29"/></g>
+<path d="M577 206Q602 212 609 242L591 258 570 238Q559 217 577 206Z" fill="#697568"/><ellipse cx="591" cy="227" rx="4" ry="6" fill="#222c24"/>
+<path d="M179 483 485 324 512 393 441 504 322 549 241 530Z" fill="url(#ridge)"/><path d="M179 483 485 324 491 343 189 496Z" fill="#c6c6b5"/>
+<g fill="none" stroke="#d3d3c5" stroke-width="1"><path d="M233 508 412 451 482 374M258 527 419 474 473 419M290 541 424 498"/></g>
+<path d="M390 291 410 271 444 269 469 287 478 319 463 345 427 356 398 339 385 312Z" fill="url(#stone)" stroke="#727b70"/>
+<g stroke="#b4b7a6" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M306 366Q310 333 329 321" stroke-width="30"/><path d="M318 338 351 351 390 326M329 342 362 355 392 339" stroke-width="13"/><path d="M307 369 279 410 249 442M312 373 339 398 348 411" stroke-width="18"/></g>
+<ellipse cx="336" cy="305" rx="13" ry="19" transform="rotate(20 336 305)" fill="#b4b7a6"/><path d="M321 299Q321 280 339 286L348 298" fill="#60695d"/><path d="M291 364 320 360 326 387 300 391Z" fill="#c8c7b5"/>
 </svg>

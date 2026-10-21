@@ -1,12 +1,12 @@
 # RIKT
 
-Rishi Patel's personal archive. RIKT means the void. The Ouroboric Engine adds a scroll-led journey and optional 3D inspection to the original static content and publishing system.
+Rishi Patel's personal archive. RIKT means the void. The homepage is a freely rotatable Sisyphus–Ouroboros sculpture with six direct page destinations, backed by the original static content and publishing system.
 
-Astro, strict TypeScript, Markdown content collections, and plain CSS. No database, login, CMS, analytics, external font requests, or API keys. An optional, locally bundled Three.js scene depicts Sisyphus, the stone, mountain and Ouroboros; ordinary HTML navigation and a static SVG remain available without JavaScript or WebGL. Local P052 fonts and their license are included. Three.js is MIT licensed; its notice is in `public/assets/THREE-LICENSE.txt`.
+Astro, strict TypeScript, Markdown content collections, and plain CSS. No database, login, CMS, analytics, external font requests, or API keys. An optional, locally bundled Three.js scene depicts Sisyphus, the stone, mountain and Ouroboros; ordinary HTML navigation and a static SVG remain available without JavaScript or WebGL. Manrope is bundled locally under the SIL Open Font License; its license is included. Retained P052 assets also keep their license. Three.js is MIT licensed; its notice is in `public/assets/THREE-LICENSE.txt`.
 
 ## The Ouroboric Engine
 
-The homepage uses native document scrolling through six chapters. Inspect mode supports pointer/touch dragging, keyboard arrows, zoom/reset controls, part selection and explicit links to the existing pages. Escape returns to the same place in the journey. Reduced motion uses still pushing poses and immediate view changes; the renderer stops when the scene settles.
+The homepage contains only the sculpture, its destination points and minimal view controls. Drag immediately to rotate on any axis; two-finger gestures zoom and twist. Right-drag pans. Keyboard arrows rotate, Q/E roll, +/− zoom, Home resets and Space pauses. All six labels are ordinary direct page links. Reduced motion holds a still pose and disables inertial animation; direct manipulation remains available.
 
 `src/components/OuroborosScene.astro` provides the static shell, `src/lib/ouroboros-model.ts` creates the original sculpture, `src/scripts/ouroboros.ts` controls it, and `src/styles/apparatus.css` styles the homepage. The model loads after the HTML/static drawing. See [Apparatus 02 notes](docs/apparatus-02.md). The previous Sites integration remains recorded in [its historical notes](docs/sites-integration.md); no Sites generator or service participates in this build.
 
@@ -35,7 +35,7 @@ npm run verify:publishing
 npm run preview
 ```
 
-`format:check` is the formatting lint gate; `npm run format` applies fixes. `check` checks TypeScript and Astro templates. `verify:apparatus` checks the real model's destinations, finite geometry, continuous scroll poses, reduced-motion pose and stone ray selection. `verify` examines the current `dist` output for routes, navigation, local links and anchors, metadata, draft/placeholder visibility, and empty archive states. `verify:publishing` adds a temporary Markdown article, builds with a test origin, verifies publication, removes the fixture, and rebuilds the original site. Run it with no other build or dev server writing output. `preview` serves the production build locally.
+`format:check` is the formatting lint gate; `npm run format` applies fixes. `check` checks TypeScript and Astro templates. `verify:apparatus` checks the real model's destinations, finite geometry, continuous periodic poses, full quaternion pitch/roll, reduced-motion pose and stone ray selection. `verify` examines the current `dist` output for routes, navigation, local links and anchors, metadata, draft/placeholder visibility, and empty archive states. `verify:publishing` adds a temporary Markdown article, builds with a test origin, verifies publication, removes the fixture, and rebuilds the original site. Run it with no other build or dev server writing output. `preview` serves the production build locally.
 
 ## Add and publish writing
 
@@ -60,7 +60,7 @@ Publishing is an explicit status change; a future `publishedDate` does not sched
 
 ## Update other content
 
-- **About:** edit `src/content/about.md`; its body feeds both the homepage About section and `/about/`. `lede` supplies the introductory sentence, and publication status controls the standalone page’s indexing. Keep factual edits owner-approved.
+- **About:** edit `src/content/about.md`; its body feeds `/about/`. `lede` supplies the introductory sentence, and publication status controls the standalone page’s indexing. Keep factual edits owner-approved.
 - **Work:** edit `src/pages/work.astro`. Its approved experience summaries are published; do not add credentials, dates or results without confirmation.
 - **Contact:** edit `src/pages/contact.astro`. GitHub is confirmed; email is still explicitly forthcoming. Keep `noindex` until the incomplete contact page is ready for indexing; then add `/contact/` to the sitemap.
 - **Projects:** edit or add Markdown in `src/content/projects/`. Required fields are `title`, `slug`, `description`, and `status`. Publish approved project descriptions with `status: published`. Optional `subtitle`, `tags`, and `order` preserve the drawing-board card presentation. Do not invent metrics or accomplishments.
