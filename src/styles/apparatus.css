@@ -600,8 +600,8 @@ html.home[data-theme="dark"] {
   top: 48%;
 }
 .is-inspecting .plate-index [data-scene-node="learning"] {
-  right: 24%;
-  top: 75%;
+  right: 40%;
+  top: 80%;
 }
 .is-inspecting .plate-index [data-scene-node="writing"] {
   left: 25%;
