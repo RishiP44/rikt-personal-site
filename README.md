@@ -1,12 +1,14 @@
 # RIKT
 
-Rishi Patel's personal archive. RIKT means the void. The accepted drawing-board design is integrated into the original static content and publishing system.
+Rishi Patel's personal archive. RIKT means the void. The Ouroboric Engine adds a scroll-led journey and optional 3D inspection to the original static content and publishing system.
 
-Astro, strict TypeScript, Markdown content collections, and plain CSS. No database, login, CMS, analytics, external font requests, or API keys. Small progressive-enhancement JavaScript handles theme preference, component descriptions and section indicators. Machine navigation is ordinary SVG links and works without JavaScript. Local P052 fonts and their license are included.
+Astro, strict TypeScript, Markdown content collections, and plain CSS. No database, login, CMS, analytics, external font requests, or API keys. An optional, locally bundled Three.js scene depicts Sisyphus, the stone, mountain and Ouroboros; ordinary HTML navigation and a static SVG remain available without JavaScript or WebGL. Local P052 fonts and their license are included. Three.js is MIT licensed; its notice is in `public/assets/THREE-LICENSE.txt`.
 
-## Drawing-board integration
+## The Ouroboric Engine
 
-The visual source is Sites version 2, commit `96af5d87153a4ec84df2ef221757eaf0ad0320c4`. Shared Astro layouts/components render its design; `src/assets/machine.svg` is the accepted inline illustration. `src/styles/global.css` contains the paper, theme and responsive styles; `public/scripts/site.js` is the progressive enhancement. The Sites Python generator is not part of this build. See [integration notes](docs/sites-integration.md).
+The homepage uses native document scrolling through six chapters. Inspect mode supports pointer/touch dragging, keyboard arrows, zoom/reset controls, part selection and explicit links to the existing pages. Escape returns to the same place in the journey. Reduced motion uses still pushing poses and immediate view changes; the renderer stops when the scene settles.
+
+`src/components/OuroborosScene.astro` provides the static shell, `src/lib/ouroboros-model.ts` creates the original sculpture, `src/scripts/ouroboros.ts` controls it, and `src/styles/apparatus.css` styles the homepage. The model loads after the HTML/static drawing. See [Apparatus 02 notes](docs/apparatus-02.md). The previous Sites integration remains recorded in [its historical notes](docs/sites-integration.md); no Sites generator or service participates in this build.
 
 ## Local development
 
@@ -26,13 +28,14 @@ Run commands from the project folder with the Node.js version specified above ac
 ```powershell
 npm run format:check
 npm run check
+npm run verify:apparatus
 npm run build
 npm run verify
 npm run verify:publishing
 npm run preview
 ```
 
-`format:check` is the formatting lint gate; `npm run format` applies fixes. `check` checks TypeScript and Astro templates. `verify` examines the current `dist` output for routes, navigation, local links and anchors, metadata, draft/placeholder visibility, and empty archive states. `verify:publishing` adds a temporary Markdown article, builds with a test origin, verifies publication, removes the fixture, and rebuilds the original site. Run it with no other build or dev server writing output. `preview` serves the production build locally.
+`format:check` is the formatting lint gate; `npm run format` applies fixes. `check` checks TypeScript and Astro templates. `verify:apparatus` checks the real model's destinations, finite geometry, continuous scroll poses, reduced-motion pose and stone ray selection. `verify` examines the current `dist` output for routes, navigation, local links and anchors, metadata, draft/placeholder visibility, and empty archive states. `verify:publishing` adds a temporary Markdown article, builds with a test origin, verifies publication, removes the fixture, and rebuilds the original site. Run it with no other build or dev server writing output. `preview` serves the production build locally.
 
 ## Add and publish writing
 

@@ -125,11 +125,27 @@ export async function verifyBuild() {
     ];
     assert.equal(
       scripts.length,
-      2,
-      `${route}: only the theme bootstrap and progressive enhancement script`,
+      route === "/" ? 3 : 2,
+      `${route}: only approved theme/enhancement scripts and the homepage apparatus module`,
     );
     assert.match(scripts[0][2], /localStorage\.getItem\("rikt-theme"\)/);
     assert.match(scripts[1][1], /src="\/scripts\/site\.js"/);
+    if (route === "/") {
+      assert.match(scripts[2][1], /type="module"/);
+      assert.match(scripts[2][1], /src="\/_astro\/[^\"]+\.js"/);
+      assert.match(html, /data-apparatus/);
+      assert.match(html, /data-render-state="static"/);
+      assert.match(html, /id="ouro-title"/);
+      for (const id of [
+        "about",
+        "work",
+        "projects",
+        "learning",
+        "writing",
+        "contact",
+      ])
+        assert.match(home, new RegExp(`id="${id}" data-chapter="${id}"`));
+    }
     assert.match(html, /class="theme-switch"[^>]*hidden/);
     assert.doesNotMatch(
       html,

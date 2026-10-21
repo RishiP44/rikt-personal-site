@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720" fill="none" role="img" aria-labelledby="ouro-title ouro-desc">
+  <title id="ouro-title">The Ouroboric Engine</title><desc id="ouro-desc">A serpent holds its tail around an open center. Within its lower arc, a geometric Sisyphus leans into a faceted stone on an ascending mountain path.</desc>
+  <g stroke="currentColor" stroke-width="1">
+    <circle cx="360" cy="350" r="280" opacity=".22"/><circle cx="360" cy="350" r="269" stroke-dasharray="2 16" opacity=".35"/>
+    <path d="M595 248A247 247 0 1 0 605 320" stroke-width="13" opacity=".6"/><path d="M592 241l30 8 12 29-18 18-28-12-8-23Z" fill="currentColor" opacity=".75"/>
+    <path d="M606 320l13-39-24 10Z" fill="currentColor" opacity=".5"/><circle cx="615" cy="262" r="3"/>
+    <path d="M163 492l328-172-20 208-117 63-145-17Z" fill="currentColor" fill-opacity=".07"/>
+    <path d="M163 492l328-172M190 477l33 51-14 46m36-126 35 66-9 74m33-171 28 80-5 88m40-202 28 86-9 85m40-207 27 89-12 85" opacity=".5"/>
+    <path d="M310 434l-15-33 6-53 22-20 27 19-7 35 27 11-6 17-43-12-5 44 15 36-14 10-24-45-36 29-14-15Z" fill="currentColor" fill-opacity=".8"/>
+    <path d="M305 324l-2-27 22-9 18 14-4 25-19 9Z" fill="currentColor" fill-opacity=".85"/>
+    <path d="M383 328l43-18 44 22 12 43-28 39-48 1-33-38Z" fill="currentColor" fill-opacity=".12"/>
+    <path d="M383 328l34 22 9-40m-9 40 43 11 10-29m-53 18-8 43-36-16m36 16 45 21 6-53" opacity=".6"/>
+    <path d="M360 55v16m0 558v16M65 350h16m558 0h16" opacity=".4"/>
+  </g>
+</svg>

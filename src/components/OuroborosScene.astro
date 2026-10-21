@@ -1,0 +1,84 @@
+---
+import fallback from "../assets/ouroboros.svg?raw";
+import { chapters } from "../lib/apparatus";
+---
+
+<div class="apparatus" data-apparatus data-render-state="static">
+  <div class="apparatus-viewport">
+    <div class="apparatus-fallback" set:html={fallback} />
+    <canvas
+      class="apparatus-canvas"
+      role="img"
+      aria-hidden="true"
+      aria-label="Sisyphus and the Ouroboros. In Inspect mode, drag or use arrow keys to rotate; plus and minus to zoom; Escape to return."
+      aria-describedby="inspection-help"
+      tabindex="-1"
+    ></canvas>
+  </div>
+  <svg class="apparatus-rays" aria-hidden="true">
+    {chapters.map(({ id }) => (
+      <line data-ray={id} />
+    ))}
+  </svg>
+  <nav class="plate-index" aria-label="Apparatus destinations">
+    {chapters.map(({ id, number, label, description }) => (
+      <a
+        class="part"
+        href={id === "about" ? "#about" : `/${id}/`}
+        aria-label={label}
+        data-scene-node={id}
+        data-description={description}
+      >
+        <span class="node-mark">{number}</span>
+        <span class="node-name">{label}</span>
+      </a>
+    ))}
+  </nav>
+  <div class="apparatus-controls" hidden>
+    <button
+      type="button"
+      class="inspect-toggle"
+      aria-pressed="false"
+      aria-describedby="inspection-help"
+    >
+      Inspect the apparatus <span aria-hidden="true">↗</span>
+    </button>
+    <div class="inspection-tools" hidden>
+      <button type="button" data-control="zoom-in" aria-label="Zoom in">
+        +
+      </button>
+      <button type="button" data-control="zoom-out" aria-label="Zoom out">
+        −
+      </button>
+      <button type="button" data-control="reset">
+        Reset view
+      </button>
+    </div>
+    <p id="inspection-help">
+      Scroll to follow the story. Inspect to take a closer look.
+    </p>
+  </div>
+  <aside
+    class="part-detail"
+    aria-label="Selected part"
+    aria-live="polite"
+    hidden
+  >
+    <p class="mono" data-part-number></p>
+    <h2 data-part-name></h2>
+    <p data-part-description></p>
+    <a class="text-link" data-part-link href="/about/">
+      Open About <span aria-hidden="true">↗</span>
+    </a>
+  </aside>
+  <p class="static-note">A study in effort &amp; return.</p>
+</div>
+<script>
+  // Paint the HTML and static drawing before loading optional 3D enhancement.
+  const loadScene = () => void import("../scripts/ouroboros").catch(() => {});
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(loadScene, { timeout: 1000 });
+  } else {
+    setTimeout(loadScene, 0);
+  }
+</script>

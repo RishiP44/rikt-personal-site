@@ -5,19 +5,23 @@
 ```text
 .github/workflows/checks.yml  Formatting, typecheck, build, artifact/publishing checks
 src/
-  components/                ContentNotice and EntryList
+  components/                Shared content components and OuroborosScene
+  assets/                    Original SVG fallback and retained illustration
   content/
     about.md                 Replaceable biography, independently publishable
-    projects/*.md            Seven initial placeholder entries
+    projects/*.md            Four published summaries, three placeholders
     learning/*.md            Six initial placeholder entries
     writing/*.md             One sample draft
   content.config.ts          Frontmatter validation
   layouts/                   Shared document and content-entry layouts
-  lib/                       Navigation, collection access, sorting, date formatting
+  lib/                       Content helpers, chapter views, procedural 3D model
+  scripts/ouroboros.ts        Optional Three.js browser controller
   pages/                     Static routes, collection routes, robots, sitemap, 404
-  styles/global.css          Minimal temporary styling
+  styles/global.css          Shared typography, themes and archive pages
+  styles/apparatus.css       Homepage journey and inspection layout
 scripts/
   verify-build.mjs           Validate generated routes, links, metadata, visibility
+  verify-apparatus.mjs       Model, destination, pose and ray selection checks
   verify-publishing.mjs      Temporary Markdown-only publication check and cleanup
 ```
 
@@ -25,7 +29,7 @@ scripts/
 
 | Route                                           | Initial content / visibility                                               |
 | ----------------------------------------------- | -------------------------------------------------------------------------- |
-| `/`                                             | Drawing board, six linked assemblies, homepage About; indexable            |
+| `/`                                             | Scroll journey, optional 3D inspection, six HTML chapters; indexable       |
 | `/about/`                                       | Shared published Markdown biography; indexable                             |
 | `/work/`                                        | Accepted experience summaries; indexable                                   |
 | `/projects/`                                    | Published entries only; four approved summaries                            |
@@ -56,7 +60,7 @@ Astro generates directory-style routes. Local routing accepts both slashless and
 
 `status` is required and is one of `placeholder`, `draft`, or `published`. Required `slug` is the stable URL key; filename changes do not change the URL. Duplicate slugs fail the build. Writing and learning require a valid `publishedDate` only when published; learning also requires `subject`. No dates or biographical claims are fabricated for placeholders.
 
-The homepage now uses the accepted drawing-board design with `#drawing` and `#about` sections. The six machine destinations are ordinary SVG anchors. `/about/` remains available, and every existing slug is retained. Four project summaries are published; learning has approved overview text plus the existing unpublished record routes.
+The homepage retains `#drawing` and `#about`, and adds `#work`, `#projects`, `#learning`, `#writing` and `#contact` chapters. Its six destinations are ordinary HTML anchors. Optional Three.js enhancement adds scroll-linked views and Inspect mode. `/about/` remains available, and every existing slug is retained. Four project summaries are published; learning has approved overview text plus the existing unpublished record routes.
 
 Every entry receives a route, including drafts and placeholders. Only published entries are returned to public indexes. All non-published entries show notices, receive `noindex, follow`, and are excluded from the sitemap. This allows direct preview without adding sample content to public listings. These routes are not private.
 

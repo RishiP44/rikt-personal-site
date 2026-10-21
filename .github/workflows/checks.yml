@@ -20,6 +20,7 @@ jobs:
       - run: npm ci
       - run: npm run format:check
       - run: npm run check
+      - run: npm run verify:apparatus
       - run: npm run build
       - run: npm run verify
       - run: npm run verify:publishing
