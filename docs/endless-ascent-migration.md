@@ -31,3 +31,5 @@ Desktop browser checks exercised all five chapter destinations, a Tabloid articl
 The migration also restores light-theme persistence, adds a skip link/visible focus, supplies a homepage h1, and respects reduced motion for zoom/traveller effects. These are bounded usability adaptations, not a new visual direction.
 
 Cloudflare must serve dist/client rather than the retired Astro dist. Actual push, CI and live file-comparison results are retained outside the repository in the endless-ascent-replacement evidence folder; local checks alone do not prove deployment.
+
+Initial public verification found Cloudflare’s directory-slash normalization interacting with broad collection redirects to form a loop. Broad Projects/Learning rules were replaced by explicit redirects for the thirteen known legacy detail slugs, and both Contact slash variants now redirect to About. Historical failure evidence is retained outside the repository.

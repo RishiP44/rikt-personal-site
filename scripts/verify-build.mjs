@@ -75,8 +75,8 @@ assert.equal(
   await readFile(path.join(root, "404.html"), "utf8"),
   await readFile(path.join(root, "404/index.html"), "utf8"),
 );
-assert(redirects.includes("/writing /tabloid 301"));
-assert(redirects.includes("/contact /about 301"));
+assert(redirects.includes("/writing /tabloid/ 301"));
+assert(redirects.includes("/contact /about/ 301"));
 for (const font of ["hanken-grotesk.ttf", "instrument-serif.ttf", "instrument-serif-italic.ttf"])
   assert((await readFile(path.join(root, "fonts", font))).length > 50000);
 const assets = await readdir(path.join(root, "assets"));
@@ -89,3 +89,9 @@ console.log(
     links +
     " local links/assets/anchors; accepted chapters and artwork; placeholder noindex; sitemap; local fonts; custom 404 and legacy redirect configuration.",
 );
+
+assert(!redirects.includes("/projects/*"), "Collection root must not match its own redirect");
+assert(!redirects.includes("/learning/*"), "Collection root must not match its own redirect");
+assert(redirects.includes("/contact/ /about/ 301"));
+assert(redirects.includes("/projects/procuretrack/ /projects/ 301"));
+assert(redirects.includes("/learning/databases/ /learning/ 301"));
