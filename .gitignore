@@ -25,3 +25,11 @@ coverage/
 Thumbs.db
 *.log
 src/content/writing/__publishing-check.md
+
+# React / TanStack replacement build outputs
+.output/
+.vinxi/
+.tanstack/
+.nitro/
+.wrangler/
+.dev.vars

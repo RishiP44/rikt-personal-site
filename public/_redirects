@@ -1,0 +1,5 @@
+/writing /tabloid 301
+/writing/* /tabloid 301
+/contact /about 301
+/projects/* /projects 301
+/learning/* /learning 301

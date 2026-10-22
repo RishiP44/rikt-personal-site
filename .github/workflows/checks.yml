@@ -6,8 +6,6 @@ on:
     branches: [main]
 permissions:
   contents: read
-env:
-  ASTRO_TELEMETRY_DISABLED: "1"
 jobs:
   checks:
     runs-on: ubuntu-latest
@@ -20,7 +18,7 @@ jobs:
       - run: npm ci
       - run: npm run format:check
       - run: npm run check
-      - run: npm run verify:apparatus
+      - run: npm run lint
+      - run: npm test
       - run: npm run build
       - run: npm run verify
-      - run: npm run verify:publishing
